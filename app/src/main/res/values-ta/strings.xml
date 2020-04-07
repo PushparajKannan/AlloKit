@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="address">முகவரி</string>
+    <string name="LocationisNotEnable">Please turn on GPS</string>
+    <string name="needtoenable">Need to enable for automatic fetch adress</string>
+    <string name="Yes">ஆம்</string>
+    <string name="No">இல்லை</string>
+    <string name="my_order">என் ஆர்டர்</string>
+    <string name="lan">த</string>
+    <string name="checkOut">சரிபார்</string>
+    <string name="pay_type">ஆர்டர் வகை</string>
+    <string name="addres_info">முகவரி தகவல்</string>
+    <string name="orders">ஆர்டர்கள்</string>
+    <string name="ReplyFromPoliceOfficers">காவல்துறை அதிகாரிகளிடமிருந்து பதில்</string>
+    <string name="Details">விவரங்கள்</string>
+    <string name="Notification">அறிவிப்பு</string>
+    <string name="Date">தேதி</string>
+    <string name="Quantity">அளவு</string>
+    <string name="orderon">இயக்கப்பட்டது</string>
+    <string name="totalamount">மொத்த தொகை</string>
+    <string name="loading">ஏற்றுகிறது...</string>
+    <string name="enter_address">முகவரியை உள்ளிடவும்</string>
+    <string name="your_order_sucessfull">உங்கள் ஆர்டர் வெற்றிகரமாக வைக்கப்பட்டுள்ளது</string>
+    <string name="dummy_content">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="title_profile">சுயவிவரம்</string>
+    <string name="title_home">வீடு</string>
+    <string name="title_notifications">அறிவிப்பு</string>
+    <string name="title_mycart">என் ஆர்டர்</string>
+    <string name="my_profile">சுயவிவரம்</string>
+    <string name="phone">தொலைபேசி</string>
+    <string name="email">மின்னஞ்சல்</string>
+    <string name="name">பெயர்</string>
+    <string name="verify_code">சரிபார்ப்புக் குறியீடு</string>
+    <string name="skip" >தவிர்>></string>
+    <string name="pls_enter_otp">OTP ஐ உள்ளிடவும்</string>
+    <string name="gerl_info">பொதுவான செய்தி</string>
+    <string name="Verify">சரிபார்க்கவும்</string>
+    <string name="pls_enter_verify">அனுப்பும் சரிபார்ப்புக் குறியீட்டைத் தட்டச்சு செய்க \n </string>
+    <string name="buy">வாங்க</string>
+    <string name="verify_your_otp">உங்கள் OTP ஐ சமர்ப்பிக்கவும்</string>
+    <string name="verifyOTP">OTP ஐ சமர்ப்பிக்கவும்</string>
+    <string name="otp_miss_match">OTP மிஸ் பொருந்தியது</string>
+</resources>

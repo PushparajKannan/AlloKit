@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustNothing"
+    tools:context=".kitmodule.SignOTPUpActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/title_lay"
+        android:layout_width="match_parent"
+        android:layout_height="90dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:textSize="26sp"
+            android:layout_margin="16dp"
+            android:layout_marginLeft="16dp"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="@font/psr"
+
+            android:layout_alignParentBottom="true"/>
+
+<View
+    android:layout_width="match_parent"
+    android:layout_height="0.8dp"
+    android:background="@color/lightGrey"
+    android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+
+    <com.allocare.thenibazzar.kitmodule.CustomViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="90dp"
+        />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</RelativeLayout>

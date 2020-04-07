@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TheniBazzar</string>
+    <string name="address">Address</string>
+    <string name="LocationisNotEnable">Please turn on GPS</string>
+    <string name="needtoenable">Need to enable for automatic fetch adress</string>
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
+    <string name="my_order">My Orders</string>
+    <string name="lan">E</string>
+    <string name="checkOut">Check Out</string>
+    <string name="pay_type">Payment Type</string>
+    <string name="addres_info">Address Information</string>
+    <string name="orders">Orders</string>
+    <string name="ReplyFromPoliceOfficers">Reply From Theni Bazaar</string>
+    <string name="Details">Details</string>
+    <string name="Notification">Notification</string>
+    <string name="Date">Date</string>
+    <string name="Quantity">Quantity</string>
+    <string name="orderon">Ordered On</string>
+    <string name="totalamount">Total Amount</string>
+    <string name="loading">Loading...</string>
+    <string name="enter_address">Enter Address</string>
+    <string name="your_order_sucessfull">Your Order Placed Successfully</string>
+    <string name="dummy_content">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_home">Home</string>
+    <string name="title_notifications">Notification</string>
+    <string name="title_mycart">MyOrders</string>
+    <string name="my_profile">Profile</string>
+    <string name="phone">Phone</string>
+    <string name="email">Email</string>
+    <string name="name">Name</string>
+    <string name="verify_code">Verification  Code</string>
+    <string name="skip" >Skip>></string>
+    <string name="pls_enter_otp">Please Enter OTP</string>
+    <string name="gerl_info">General Information</string>
+    <string name="Verify">Verify</string>
+    <string name="pls_enter_verify">Please type the verification code send \n to</string>
+    <string name="buy">Buy</string>
+    <string name="verify_your_otp">Please verify your OTP</string>
+    <string name="verifyOTP">VerifyOTP</string>
+    <string name="otp_miss_match">OTP Miss matched</string>
+</resources>
