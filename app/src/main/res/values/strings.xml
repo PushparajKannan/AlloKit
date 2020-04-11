@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TheniBazzar</string>
+    <string name="app_name">Theni Sandhai</string>
     <string name="address">Address</string>
     <string name="LocationisNotEnable">Please turn on GPS</string>
-    <string name="needtoenable">Need to enable for automatic fetch adress</string>
+    <string name="needtoenable">Need to enable for automatic fetch address</string>
     <string name="Yes">Yes</string>
     <string name="No">No</string>
     <string name="my_order">My Orders</string>
-    <string name="lan">E</string>
+    <string name="lan">தமிழ்</string>
     <string name="checkOut">Check Out</string>
     <string name="pay_type">Payment Type</string>
     <string name="addres_info">Address Information</string>
@@ -32,7 +32,7 @@
     <string name="email">Email</string>
     <string name="name">Name</string>
     <string name="verify_code">Verification  Code</string>
-    <string name="skip" >Skip>></string>
+    <string name="skip">Skip>></string>
     <string name="pls_enter_otp">Please Enter OTP</string>
     <string name="gerl_info">General Information</string>
     <string name="Verify">Verify</string>
@@ -40,5 +40,23 @@
     <string name="buy">Buy</string>
     <string name="verify_your_otp">Please verify your OTP</string>
     <string name="verifyOTP">VerifyOTP</string>
-    <string name="otp_miss_match">OTP Miss matched</string>
+    <string name="otp_miss_match">OTP Mis matched</string>
+    <string name="app_title">Theni Sandhai</string>
+    <string name="verifide_otp">OTP Verified Successfully</string>
+    <string name="cancel">Cancel</string>
+    <string name="pincode">Pincode</string>
+    <string name="Area">City , District</string>
+    <string name="street">D.No, Street</string>
+    <string name="save">Save</string>
+    <string name="enter_stret">Enter D.no and Street name</string>
+    <string name="enter_cityname">Enter City and District and State</string>
+    <string name="enter_pincode">Enter PIN Code number</string>
+    <string name="address_saved">Address Saved Successfully</string>
+    <string name="pleas_fil_adress">Please fill your address in profile</string>
+    <string name="invalid_pin">Please enter valid PIN code</string>
+    <string name="district">State</string>
+    <string name="change">Change</string>
+    <string name="new_address_saved">New Address Saved</string>
+    <string name="order_cancel">Your order removed successfully</string>
+    <string name="current_location">Current location</string>
 </resources>

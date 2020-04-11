@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Theni Bazaar"
+            android:text="@string/app_title"
             android:textSize="26sp"
             android:layout_margin="16dp"
             android:layout_marginLeft="16dp"
@@ -529,16 +529,36 @@
             </LinearLayout>
 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/addres_info"
-                android:fontFamily="@font/ps"
-                android:textSize="18sp"
-                />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    android:text="@string/addres_info"
+                    android:fontFamily="@font/ps"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/change"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="@string/change"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="@font/psr"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"/>
+
+            </RelativeLayout>
+
+
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

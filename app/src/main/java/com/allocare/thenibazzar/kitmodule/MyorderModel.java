@@ -11,6 +11,7 @@ public class MyorderModel {
     String totalprice;
     String paytype;
     String orderStatus;
+    String orderid;
 
     public String getId() {
         return id;
@@ -82,5 +83,13 @@ public class MyorderModel {
 
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public String getOrderid() {
+        return orderid;
+    }
+
+    public void setOrderid(String orderid) {
+        this.orderid = orderid;
     }
 }

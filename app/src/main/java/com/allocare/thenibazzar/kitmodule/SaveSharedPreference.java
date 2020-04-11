@@ -34,6 +34,11 @@ public class SaveSharedPreference {
     private static final String LOGO= "logo";
     private static final String PHONE= "Phonenumver";
     private static final String VERIFYSTATUS= "verifystatus";
+    private static final String DOORNUMBER= "dornumer";
+    private static final String STREETNUMBER= "streetnumber";
+    private static final String CITY= "city";
+    private static final String STATE= "state";
+    private static final String PINNUMBER= "idPinceode";
     private static SharedPreferences.Editor editor;
 
     private static SharedPreferences getSharedPreferences(Context ctx) {
@@ -264,6 +269,7 @@ public class SaveSharedPreference {
         editor = getSharedPreferences(ctx).edit();
         editor.clear(); //clear all stored data
         editor.apply();
+        editor.commit();
     }
 
 
@@ -285,6 +291,8 @@ public class SaveSharedPreference {
     public static String getUserArea(Context ctx) {
         return getSharedPreferences(ctx).getString(AREA, "");
     }
+
+
 
 
     public static void setVolunteerId(Context context, String lang) {
@@ -334,4 +342,44 @@ public static void setDistLogo(Context context, String lang) {
         editor.putString(VERIFYSTATUS,lang);
         editor.apply();
     }
+
+
+    public static String getUserStreetDoornumber(Context ctx) {
+        return getSharedPreferences(ctx).getString(DOORNUMBER, "");
+    }
+
+    public static void setUserStreetDoornumber(Context context, String lang) {
+        editor = getSharedPreferences(context).edit();
+        editor.putString(DOORNUMBER,lang);
+        editor.apply();
+    }
+    public static String getUsercity(Context ctx) {
+        return getSharedPreferences(ctx).getString(CITY, "");
+    }
+
+    public static void setUsercity(Context context, String lang) {
+        editor = getSharedPreferences(context).edit();
+        editor.putString(CITY,lang);
+        editor.apply();
+    }
+
+    public static String getUserstate(Context ctx) {
+        return getSharedPreferences(ctx).getString(STATE, "");
+    }
+
+    public static void setUserstate(Context context, String lang) {
+        editor = getSharedPreferences(context).edit();
+        editor.putString(STATE,lang);
+        editor.apply();
+    }
+    public static String getUserPIN(Context ctx) {
+        return getSharedPreferences(ctx).getString(PINNUMBER, "");
+    }
+
+    public static void setUserPIN(Context context, String lang) {
+        editor = getSharedPreferences(context).edit();
+        editor.putString(PINNUMBER,lang);
+        editor.apply();
+    }
+
 }

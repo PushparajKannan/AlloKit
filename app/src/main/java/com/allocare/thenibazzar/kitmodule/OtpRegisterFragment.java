@@ -2,6 +2,7 @@ package com.allocare.thenibazzar.kitmodule;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -46,6 +47,8 @@ public class OtpRegisterFragment extends Fragment implements View.OnClickListene
     CustomViewPager viewPager;
     ProgressDialog dialog ;
 
+    TextInputEditText streetnumber, city,idPinceode,state;
+
 
 
    /* @Override
@@ -69,6 +72,11 @@ public class OtpRegisterFragment extends Fragment implements View.OnClickListene
         phonenumberText = view.findViewById(R.id.phonenumberText);
         emailText = view.findViewById(R.id.emailText);
         addressText = view.findViewById(R.id.addressText);
+        idPinceode = view.findViewById(R.id.idPinceode);
+        city = view.findViewById(R.id.city);
+        streetnumber = view.findViewById(R.id.streetnumber);
+        state = view.findViewById(R.id.state);
+
         return view;
     }
 
@@ -84,6 +92,10 @@ public class OtpRegisterFragment extends Fragment implements View.OnClickListene
 
         singInBtn.setOnClickListener(this);
        // addressText.setText(Utility.getAddress(mActivity,LocationValueModel.getmLatitude(), LocationValueModel.getmLongitude()));
+
+        usernameText.setText(SaveSharedPreference.getUserName(mActivity));
+        // addressText.setText(SaveSharedPreference.getPrefUserAddress(mActivity));
+        emailText.setText(SaveSharedPreference.getPrefUserEmail(mActivity));
 
         addressText.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -138,15 +150,47 @@ public class OtpRegisterFragment extends Fragment implements View.OnClickListene
             case R.id.singInBtn:
 
                 if(!TextUtils.isEmpty(usernameText.getText().toString().trim()) && !TextUtils.isEmpty(phonenumberText.getText().toString().trim())
-                && !TextUtils.isEmpty(emailText.getText().toString().trim()) && !TextUtils.isEmpty(addressText.getText().toString().trim()))
+                && !TextUtils.isEmpty(emailText.getText().toString().trim()) && !TextUtils.isEmpty(streetnumber.getText().toString().trim()) &&
+                        !TextUtils.isEmpty(city.getText().toString().trim()) &&
+                        !TextUtils.isEmpty(state.getText().toString().trim()) &&
+                        !TextUtils.isEmpty(idPinceode.getText().toString().trim()))
                 {
 
                     if(Utility.isEmailValid(emailText.getText().toString().trim()))
                     {
+                        if(Utility.isValidPin(idPinceode.getText().toString().trim()))
+                        {
+                            String steert="" , citys="", states="",idpincodes="";
 
-                        showDialog();
-                        setUserRegistration(usernameText.getText().toString().trim(),emailText.getText().toString().trim(),
-                                phonenumberText.getText().toString().trim(), addressText.getText().toString().trim());
+                            steert = streetnumber.getText().toString().trim();
+                            citys = city.getText().toString().trim();
+                            states = state.getText().toString().trim();
+                            idpincodes = idPinceode.getText().toString().trim();
+
+
+
+                            SaveSharedPreference.setUserArea(mActivity,(steert +" "+ citys+" "+states+" "+idpincodes));
+
+                            SaveSharedPreference.setUserStreetDoornumber(mActivity,steert);
+                            SaveSharedPreference.setUsercity(mActivity,citys);
+                            SaveSharedPreference.setUserstate(mActivity,states);
+                            SaveSharedPreference.setUserPIN(mActivity,idpincodes);
+
+
+                            showDialog();
+
+                            setUserRegistration(usernameText.getText().toString().trim(),emailText.getText().toString().trim(),
+                                    phonenumberText.getText().toString().trim(), SaveSharedPreference.getUserArea(mActivity),steert,idpincodes,states,citys);
+
+
+                        }else {
+
+                            Toast.makeText(mActivity, getResources().getString(R.string.invalid_pin), Toast.LENGTH_SHORT).show();
+
+                        }
+
+
+
 
                     }else {
                         Toast.makeText(mActivity, "Please Enter Valid EmailId", Toast.LENGTH_SHORT).show();
@@ -168,9 +212,20 @@ public class OtpRegisterFragment extends Fragment implements View.OnClickListene
 
 
 
-                }else if(TextUtils.isEmpty(addressText.getText().toString().trim()))
+                }else if(TextUtils.isEmpty(streetnumber.getText().toString().trim()))
                 {
-                    Toast.makeText(mActivity, "Please Enter Address", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, getResources().getString(R.string.enter_stret), Toast.LENGTH_SHORT).show();
+                }else if(TextUtils.isEmpty(city.getText().toString().trim()))
+                {
+                    Toast.makeText(mActivity, getResources().getString(R.string.enter_cityname), Toast.LENGTH_SHORT).show();
+
+                }else if(TextUtils.isEmpty(state.getText().toString().trim()))
+                {
+                    Toast.makeText(mActivity, getResources().getString(R.string.enter_cityname), Toast.LENGTH_SHORT).show();
+
+                }else if(TextUtils.isEmpty(idPinceode.getText().toString().trim()))
+                {
+                    Toast.makeText(mActivity, getResources().getString(R.string.enter_pincode), Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -184,7 +239,7 @@ public class OtpRegisterFragment extends Fragment implements View.OnClickListene
 
 
 
-    private void setUserRegistration(String name,String email,String mobile,String address)
+    private void setUserRegistration(String name,String email,String mobile,String address,String street,String pincode,String satate,String city)
     {
         try {
            // String url = SaveSharedPreference.getBaseURL(mActivity)+Url.APINAME_DASHBOARD+"/"+type+"/"+SaveSharedPreference.getHostFor(mActivity);
@@ -219,6 +274,10 @@ public class OtpRegisterFragment extends Fragment implements View.OnClickListene
             map.put(Utility.NAME,name);
             map.put(Utility.EMAILID,email);
             map.put(Utility.MOBILENO,mobile);
+            map.put("street",street);
+            map.put("pincode",pincode);
+            map.put("state1",satate);
+            map.put("area",city);
             //map.put(Utility.AGE,"2");
             map.put(Utility.ADDRESS,address);
             String url=Utility.BASE_REGISTER;
@@ -253,7 +312,14 @@ public class OtpRegisterFragment extends Fragment implements View.OnClickListene
 
                             Log.e("number->","sdf--:"+SaveSharedPreference.getUserPhone(mActivity));
 
+                            Toast.makeText(mActivity, Utility.NullCheckJson(response,"message"), Toast.LENGTH_SHORT).show();
+
+
                             viewPager.setCurrentItem(1,true);
+                        }else {
+
+                            Toast.makeText(mActivity, Utility.NullCheckJson(response,"message"), Toast.LENGTH_SHORT).show();
+
                         }
 
                     }catch (JSONException e)

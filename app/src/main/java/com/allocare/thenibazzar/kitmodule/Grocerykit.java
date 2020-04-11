@@ -33,6 +33,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.allocare.thenibazzar.R;
+import com.allocare.thenibazzar.address.AddressActivity;
 import com.allocare.thenibazzar.notification.NotificationActivity;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -94,6 +95,8 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
 
    ImageView badage;
 
+   TextView change;
+
    /* @Override
     protected void attachBaseContext(Context newBase) {
       //  String lang_code = "en"; //load it from SharedPref
@@ -140,6 +143,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
         increase = findViewById(R.id.increase);
         image = findViewById(R.id.image);
         badage = findViewById(R.id.badage);
+        change = findViewById(R.id.change);
 
 
         totalprice = findViewById(R.id.totalprice);
@@ -165,8 +169,17 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
         checkOutLay.setOnClickListener(this);
         languageText.setOnClickListener(this);
         notification.setOnClickListener(this);
+        change.setOnClickListener(this);
 
         badage.setVisibility(View.GONE);
+
+        if(!SaveSharedPreference.getUserArea(mActivity).equalsIgnoreCase(""))
+        {
+            addressText.setText(SaveSharedPreference.getUserArea(mActivity));
+        }else {
+
+          //  Toast.makeText(mActivity, getResources().getString(R.string.pleas_fil_adress), Toast.LENGTH_SHORT).show();
+        }
 
         showDialog();
 
@@ -195,7 +208,10 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
                 break;
             case R.id.checkOutLay:
 
-                if(!SaveSharedPreference.getVerifystatus(mActivity).equalsIgnoreCase("No")) {
+               // if(!SaveSharedPreference.getVerifystatus(mActivity).equalsIgnoreCase("No")) {
+
+                if(!SaveSharedPreference.getUserArea(mActivity).equalsIgnoreCase(""))
+                {
                     if(!TextUtils.isEmpty(addressText.getText().toString().trim()))
                     {
                         showDialog();
@@ -205,17 +221,22 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
                     }
                 }else {
 
+                    Toast.makeText(mActivity, getResources().getString(R.string.pleas_fil_adress), Toast.LENGTH_SHORT).show();
+                }
+
+                /*}else {
+
                     Intent  i =new Intent(mActivity,SignOTPUpActivity.class);
 
                     i.putExtra("type","verify");
 
                     startActivity(i);
-                    overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                   // overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
 
                     Toast.makeText(mActivity, getResources().getString(R.string.verify_your_otp), Toast.LENGTH_SHORT).show();
 
                     finish();
-                }
+                }*/
 
 
 
@@ -229,7 +250,14 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
 
                 Intent i = new Intent(mActivity, NotificationActivity.class);
                 startActivity(i);
-                overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                //overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+
+                break;
+            case R.id.change:
+
+                Intent s =new Intent(mActivity, AddressActivity.class);
+                startActivityForResult(s,23);
+
 
                 break;
         }
@@ -410,7 +438,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
                 //Intent intent = new Intent(Grocerykit.this,MyOrderActivity.class);
                 Intent intent = new Intent(Grocerykit.this,OrderSumActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                //overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
 
                 return true;
             }
@@ -483,7 +511,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
 
                             Intent intent = new Intent(Grocerykit.this,MyOrderActivity.class);
                             startActivity(intent);
-                            overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                           // overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
 
                             finish();
 
@@ -764,12 +792,12 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
         addressText = findViewById(R.id.addressText);
 
 
-        if(addressText!=null) {
+        /*if(addressText!=null) {
             if (TextUtils.isEmpty(addressText.getText().toString().trim())) {
                 addressText.setText(Utility.getAddress(mActivity, LocationValueModel.getmLatitude(), LocationValueModel.getmLongitude()));
 
             }
-        }
+        }*/
 
     }
 
@@ -881,6 +909,29 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
                     context.getBaseContext().getResources().getDisplayMetrics());
         }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == Activity.RESULT_OK)
+        {
+            switch (requestCode)
+            {
+                case 23:
+
+                    if(data!=null)
+                    {
+                        addressText.setText(data.getStringExtra("addres"));
+                    }
+
+
+
+                    break;
+            }
+
+        }
+
+    }
 }
 
 

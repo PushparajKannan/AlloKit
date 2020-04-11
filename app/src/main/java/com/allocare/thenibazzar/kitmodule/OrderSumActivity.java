@@ -1,9 +1,11 @@
 package com.allocare.thenibazzar.kitmodule;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,11 +25,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.allocare.thenibazzar.R;
+import com.allocare.thenibazzar.address.BottomSheetFragment;
 import com.allocare.thenibazzar.notification.NotificationActivity;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -60,7 +64,9 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class OrderSumActivity extends AppCompatActivity implements View.OnClickListener {
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
+public class OrderSumActivity extends AppCompatActivity implements View.OnClickListener, IGPSActivity {
 
     BottomNavigationView bottomLay;
 
@@ -71,18 +77,24 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
     View badge = null;
 
     ViewPager pager;
+    private static final int PERMISSION_REQUEST_CODE_MAIN = 300;
+
+
 
     LinearLayout pageIndicator;
 
     int currentPage = 0;
     Timer timer;
-    final long DELAY_MS = 500;//delay in milliseconds before task is to be executed
-    final long PERIOD_MS = 3000;
+    final long DELAY_MS = 10000;//delay in milliseconds before task is to be executed
+    final long PERIOD_MS = 10000;
     GalleryAdapter adapter;
 
     ProgressDialog dialog ;
 
     TextView languageText;
+
+    private GPS gps;
+
 
     ArrayList<GroceryKitModule> data = new ArrayList<GroceryKitModule>();
 
@@ -94,6 +106,8 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
     TextView type,description,productTitle,productPrice;
 
     TextView badageTex;
+
+    ImageView info;
 
 
     @Override
@@ -124,6 +138,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
         productTitle = findViewById(R.id.productTitle);
         productPrice = findViewById(R.id.productPrice);
         buyLay = findViewById(R.id.buyLay);
+        info = findViewById(R.id.info);
 
 
         BottomNavigationMenuView bottomNavigationMenuView =
@@ -186,6 +201,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
         languageText.setOnClickListener(this);
         buyLay.setOnClickListener(this);
+        info.setOnClickListener(this);
 
     }
 
@@ -201,7 +217,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
                             Intent i = new Intent(mActivity,MyOrderActivity.class);
                             startActivity(i);
-                            overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                           // overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
 
                             return true;
                         case R.id.navigation_notifications:
@@ -209,15 +225,16 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
                             Intent j = new Intent(mActivity, NotificationActivity.class);
                             startActivity(j);
-                            overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                            //overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
 
                             return true;
 
                             case R.id.navigation_profile:
 
                                 Intent l = new Intent(mActivity, ProfileActivity.class);
+                                l.putExtra("type","home");
                                 startActivity(l);
-                                overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                               // overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
 
                                 //    openFragment(NotificationFragment.newInstance("", ""));
                             return true;
@@ -282,7 +299,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
                 dots[i].setTextSize(35);
 
                 if (i == currentItem) {
-                    dots[i].setTextColor(Color.parseColor("#DA5637"));
+                    dots[i].setTextColor(getResources().getColor(R.color.colorPrimary));
 
                 } else {
                     dots[i].setTextColor(Color.GRAY);
@@ -308,9 +325,22 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
             case R.id.buyLay:
 
-                Intent i = new Intent(mActivity,Grocerykit.class);
-                startActivity(i);
+                if(!SaveSharedPreference.getUserArea(mActivity).equalsIgnoreCase(""))
+                {
+                    Intent i = new Intent(mActivity,Grocerykit.class);
+                    startActivity(i);
+                }else {
+                    Intent l = new Intent(mActivity, ProfileActivity.class);
+                    l.putExtra("type","kit");
+                    startActivity(l);
+                }
 
+
+
+                break;
+            case R.id.info:
+                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance();
+                bottomSheetDialog.show(getSupportFragmentManager(), "Bottom Sheet Dialog Fragment");
                 break;
         }
 
@@ -358,6 +388,24 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
         overridePendingTransition(0, 0);
         finish();
         //call_police.setText(resources.getString(R.string.Call_Namakkal_Police));
+    }
+
+    @Override
+    public void locationChanged(double longitude, double latitude) {
+            Log.e("Location","Long-->"+longitude + "Lat-->"+ latitude);
+            if(latitude != 0.0) {
+                LocationValueModel.setmLatitude(latitude);
+            }
+
+            if(longitude != 0.0) {
+                LocationValueModel.setmLongitude(longitude);
+            }
+
+    }
+
+    @Override
+    public void displayGPSSettingsDialog() {
+
     }
 
 
@@ -720,6 +768,14 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onResume() {
         super.onResume();
+        if(checkPermissionMain()) {
+            if(gps!=null) {
+                if (!gps.isRunning()) gps.resumeGPS();
+            }
+        }
+
+        getLocationWithPermission();
+
 
         getNotifications();
 
@@ -960,5 +1016,115 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+
+    @Override
+    protected void onDestroy() {
+
+       // SaveSharedPreference.clearAllData(mActivity);
+
+        super.onDestroy();
+
+    }
+
+
+
+    private void getLocationWithPermission() {
+
+        if(checkPermissionMain()) {
+            gps = new GPS(this);
+        }else {
+            requestPermissionMain();
+        }
+
+    }
+
+    @Override
+    protected void onStop() {
+        gps.stopGPS();
+        super.onStop();
+    }
+
+    public boolean checkPermissionMain() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
+        //int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+
+        return result == PackageManager.PERMISSION_GRANTED; //&& result1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermissionMain() {
+
+        ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE_MAIN);
+
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+
+
+            case PERMISSION_REQUEST_CODE_MAIN:
+                if (grantResults.length > 0) {
+
+                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    // boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                    if (locationAccepted) {
+
+                        gps = new GPS(this);
+
+
+                    }
+                        /*////Here to do the task
+                        lm = (LocationManager) mActivity.getSystemService(Context.LOCATION_SERVICE);
+                        boolean gps_enabled = false;
+                        try {
+                            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                        } catch (Exception ex) {
+                        }
+                        if (gps_enabled) {
+                            lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, locationListener);
+                            //if(latitude.equals("") && longitude.equals(""))
+                            //{
+                            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            if(location!=null)
+                            {
+                                if(location.getLatitude() != 0.0) {
+                                    LocationValueModel.setmLatitude(location.getLatitude());
+                                }
+
+                                if(location.getLongitude()!= 0.0) {
+                                    LocationValueModel.setmLongitude(location.getLongitude());
+                                }
+
+                                // longitude = String.valueOf(location.getLongitude());
+                                // latitude = String.valueOf(location.getLatitude());
+                            }else
+                            {
+                                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, locationListener);
+                            }
+                            //  }
+                            // doAction();
+                        } else {
+                            new AlertDialog.Builder(mActivity)
+                                    .setTitle(getResources().getString(R.string.LocationisNotEnable))  // GPS not found
+                                    .setMessage(getResources().getString(R.string.Wanttoenable)) // Want to enable?
+                                    .setPositiveButton(getResources().getString(R.string.Yes), new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                        }
+                                    })
+                                    .setNegativeButton(getResources().getString(R.string.No), null)
+                                    .show();
+                        }
+                    }*/
+                }
+                break;
+
+
+        }
+    }
 
 }

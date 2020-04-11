@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -332,7 +333,8 @@ public class MyOrderActivity extends AppCompatActivity {
 
             ImageView avatharImg;
 
-            TextView date, title, quantity,totalprice,status;
+            TextView date, title, quantity,totalprice,status, orderid;
+            CardView cancel;
 
 
             public PostTypeViewHolder(View itemView) {
@@ -345,6 +347,8 @@ public class MyOrderActivity extends AppCompatActivity {
                 totalprice = itemView.findViewById(R.id.totalprice);
                 status = itemView.findViewById(R.id.status);
                 avatharImg = itemView.findViewById(R.id.avatharImg);
+                orderid = itemView.findViewById(R.id.orderid);
+                cancel = itemView.findViewById(R.id.buyLay);
 
 
 
@@ -370,6 +374,21 @@ public class MyOrderActivity extends AppCompatActivity {
                 totalprice.setText(tempdata.getTotalprice());
                 status.setText(tempdata.getOrderStatus());
                 title.setText(tempdata.getProductName());
+
+                orderid.setText(tempdata.getOrderid());
+
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        showDialog();
+                        setProductsCancel(tempdata.getOrderid(),listPosition);
+
+                       // post.notify();
+                       // notifyDataSetChanged();
+                    }
+                });
 
                 if(!tempdata.getImage().equalsIgnoreCase("")) {
 
@@ -485,6 +504,7 @@ public class MyOrderActivity extends AppCompatActivity {
                                     gm.setQuantity(Utility.NullCheckJson(obj,"Quantity"));
                                     gm.setPaytype(Utility.NullCheckJson(obj,"paymenttype"));
                                     gm.setOrderStatus(Utility.NullCheckJson(obj,"orderstatus"));
+                                    gm.setOrderid(Utility.NullCheckJson(obj,"orderid"));
 
                                     lists.add(gm);
 
@@ -561,6 +581,110 @@ public class MyOrderActivity extends AppCompatActivity {
         if(dialog!=null) {
             if(dialog.isShowing())
                 dialog.dismiss();
+        }
+    }
+
+
+    public void setProductsCancel(String orderid,int postion) {
+        try{
+            String language = SaveSharedPreference.getAppLanguage(this);
+            //Log.e("Language_Checking","---->"+language);
+
+            String type = "english";
+            if(language.equals("ta")) {
+                type = "tamil";
+            }else if(language.equals("en")) {
+                type = "english";
+
+            }
+
+
+
+
+
+            JSONObject map =new JSONObject();
+            map.put("orderid",orderid);
+            //map.put("language",type);
+            //map.put("offset","1");
+            //map.put("limit","40");
+            //  map.put("userid","2");
+
+
+
+            Log.e("Params","--->"+map);
+
+            //String url = SaveSharedPreference.getBaseURL(mActivity)+Utility.APINAME_PRODUCT+"/"+type+"/"+SaveSharedPreference.getHostFor(mActivity)+"/1/5";
+            String url = SaveSharedPreference.getBaseURL(mActivity)+Utility.APINAME_ORDERCANCEL;
+
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, map, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    Log.e("Respoonce","-->"+response);
+
+                    cancelDialog();
+                    try {
+                        if(response.getString(Utility.API_RESPONCE_SUCCESS).equalsIgnoreCase("true"))
+                        {
+
+                            lists.remove(postion);
+
+
+                            adpater.notifyDataSetChanged();
+                            Toast.makeText(mActivity, getResources().getString(R.string.order_cancel), Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    } catch (JSONException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    cancelDialog();
+
+                    error.printStackTrace();
+                }
+            }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String,String> headers = new HashMap<>();
+                    headers.put("token", SaveSharedPreference.getPrefUserToken(mActivity));
+                    return headers;
+                }
+            };
+
+            request.setRetryPolicy(new DefaultRetryPolicy(0,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstance(mActivity).addToRequestQueue(request);
+
+            /*{
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> headers = new HashMap<>();
+                headers.put("token", SaveSharedPreference.getPrefUserToken(mActivity));
+                return headers;
+            }
+            }*/
+
+
+            /*String language = SaveSharedPreference.getAppLanguage(this);
+            //Log.e("Language_Checking","---->"+language);
+
+            String type = "english";
+            if(language.equals("ta")) {
+                type = "tamil";
+            }else if(language.equals("en")) {
+                type = "english";
+
+            }*/
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 

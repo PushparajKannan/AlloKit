@@ -145,6 +145,8 @@ public class SignOTPUpActivity extends AppCompatActivity implements IGPSActivity
         }else {
             viewPager.setCurrentItem(0);
 
+
+
         }
 
 

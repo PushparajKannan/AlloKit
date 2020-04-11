@@ -139,7 +139,7 @@ public class OTPVerifyFragment extends Fragment implements View.OnClickListener 
                 Intent  i =new Intent(mActivity,OrderSumActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(i);
-                mActivity.overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+              //  mActivity.overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
                 mActivity.finish();
                //
 
@@ -209,12 +209,15 @@ public class OTPVerifyFragment extends Fragment implements View.OnClickListener 
 
                             SaveSharedPreference.setVerifystatus(mActivity,Utility.NullCheckJson(response,"verifystatus"));
 
+                            Toast.makeText(mActivity, getResources().getString(R.string.verifide_otp), Toast.LENGTH_SHORT).show();
+
+
                             // Intent i =new Intent(mActivity,Grocerykit.class);
                             Intent i =new Intent(mActivity,OrderSumActivity.class);
                             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                             startActivity(i);
-                            mActivity.overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                            //mActivity.overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
                             // HomeActivity.class is the activity to go after showing the splash screen.
                             mActivity.finish();
                         }else {

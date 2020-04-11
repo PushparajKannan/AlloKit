@@ -2,6 +2,7 @@ package com.allocare.thenibazzar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import com.allocare.thenibazzar.kitmodule.Grocerykit;
 import com.allocare.thenibazzar.kitmodule.OrderSumActivity;
 import com.allocare.thenibazzar.kitmodule.SaveSharedPreference;
 import com.allocare.thenibazzar.kitmodule.SignOTPUpActivity;
+import com.allocare.thenibazzar.kitmodule.Utility;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,12 +24,21 @@ public class MainActivity extends AppCompatActivity {
 
     Context mActivity;
 
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mActivity = this;
+        SaveSharedPreference.clearAllData(mActivity);
+
+
+
+        Utility.setLocale(this,SaveSharedPreference.getAppLanguage(this));
 
         imageView=(ImageView)findViewById(R.id.imageView2); // Declare an imageView to show the animation.
         anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in); // Create the animation.
@@ -62,8 +73,9 @@ public class MainActivity extends AppCompatActivity {
 
                 }else {
 
-                    Intent  i =new Intent(mActivity,SignOTPUpActivity.class);
-                    i.putExtra("type","normal");
+                   // Intent  i =new Intent(mActivity,SignOTPUpActivity.class);
+                    Intent  i =new Intent(mActivity,GsingupActivity.class);
+                    //i.putExtra("type","normal");
 
                     startActivity(i);
                     overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
@@ -80,4 +92,12 @@ public class MainActivity extends AppCompatActivity {
         imageView.startAnimation(anim);
 
     }
+
+    /*public void setOnetimeTimer(Context context) {
+        AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlarmManagerBroadcastReceiver.class);
+        intent.putExtra(ONE_TIME, Boolean.TRUE);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (1000 * 60 * 5), pi);
+    }*/
 }

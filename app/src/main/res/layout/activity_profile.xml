@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/verifyOTP"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:padding="16dp"
             android:textColor="@color/colorBlack"
             android:layout_gravity="end"
@@ -229,22 +229,43 @@
                 android:layout_marginTop="16dp"
                 android:background="@color/lightGrey"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/addres_info"
-                android:fontFamily="@font/ps"
-                android:textSize="16sp"/>
-
-
 
             <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    android:text="@string/addres_info"
+                    android:fontFamily="@font/ps"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="@string/save"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="@font/psr"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"/>
+
+            </RelativeLayout>
+
+
+
+
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 >
 
                 <!-- <ImageView
@@ -265,6 +286,129 @@
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/streetnumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/psr"
+                        android:hint="@string/street"
+                        android:textSize="18sp"
+                        />
+
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                <com.google.android.material.textfield.TextInputLayout
+
+                    android:id="@+id/area"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/city"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/psr"
+                        android:hint="@string/Area"
+                        android:textSize="18sp"
+                        />
+
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/state"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/psr"
+                        android:hint="@string/district"
+                        android:textSize="18sp"
+                        />
+
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/idPinceode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/psr"
+                        android:hint="@string/pincode"
+                        android:textSize="18sp"
+                        android:maxLength="6"
+                        android:digits="0123456789"
+                        android:inputType="number"
+                        />
+
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="16dp"
+                    android:visibility="gone"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/addressText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/psr"
+                        android:hint="@string/pincode"
+                        android:textSize="18sp"
+                        android:drawableRight="@drawable/ic_my_location_black_24dp"
+                        />
+
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--<com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="16dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/addressText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -277,9 +421,10 @@
 
 
                 </com.google.android.material.textfield.TextInputLayout>
+-->
 
 
-            </RelativeLayout>
+            </LinearLayout>
 
 
         </LinearLayout>

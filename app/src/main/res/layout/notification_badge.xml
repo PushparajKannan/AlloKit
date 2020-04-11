@@ -4,16 +4,15 @@
 
     <TextView
         android:id="@+id/notifications_badge"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
         android:layout_gravity="top|center_horizontal"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/ic_lens_black_24dp"
         android:gravity="center"
         android:padding="3dp"
-        android:text="9+"
         android:backgroundTint="@color/colorPrimary"
         android:textColor="@color/colorBlack"
         android:textSize="8sp" />

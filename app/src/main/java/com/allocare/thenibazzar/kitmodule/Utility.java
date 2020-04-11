@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -24,10 +25,11 @@ public class Utility {
 
     public static String BASE_REGISTER="http://jiovio.com/bazaar/api/register";
     public static String BASE_VERIFYOTP="http://jiovio.com/bazaar/api/verifyotp";
+    public static String BASE_SENDOTP="http://jiovio.com/bazaar/api/sendotp";
 
     //API_NAMES
           public static String APINAME_REGIGTER="register";
-          public static String APINAME_SENDOTP="sendotp";
+        //  public static String APINAME_SENDOTP="sendotp";
           public static String APINAME_VERIFYOTP="verifyotp";
           public static String APINAME_PRODUCT="grocery";
           public static String APINAME_ORDERS = "orders";
@@ -36,6 +38,8 @@ public class Utility {
           public static String APINAME_COUNT="count";
           public static String APINAME_DETAILS="details";
           public static String APINAME_BANNER="banner";
+          public static String APINAME_SENDOTP="sendotp";
+          public static String APINAME_ORDERCANCEL="ordercancel";
 
 
           //USE_FULL
@@ -78,6 +82,19 @@ public class Utility {
             String country = addresses.get(0).getCountryName();
             String postalCode = addresses.get(0).getPostalCode();
             String knownName = addresses.get(0).getFeatureName();
+            String sublocality = addresses.get(0).getSubLocality();
+            String adminarea = addresses.get(0).getAdminArea();
+
+            Log.e("city","-->"+ city);
+            Log.e("state","-->"+ state);
+            Log.e("country","-->"+ country);
+            Log.e("postalCode","-->"+ postalCode);
+            Log.e("knownName","-->"+ knownName);
+            Log.e("adminarea","-->"+ adminarea);
+            Log.e("sublocality","-->"+ sublocality);
+
+
+
 
             add = address;
 
@@ -199,6 +216,16 @@ public class Utility {
         }
 
         context.getBaseContext().getResources().updateConfiguration(config, context.getBaseContext().getResources().getDisplayMetrics());
+    }
+
+    public static boolean isValidPin(String pinnumber)
+    {
+        String regex = "^[1-9][0-9]{5}$";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(pinnumber);
+
+        return matcher.matches();
     }
 
 }

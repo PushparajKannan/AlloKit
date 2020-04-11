@@ -82,7 +82,21 @@ public class NotificationActivity extends AppCompatActivity {
         notificationModels = new ArrayList<>();
         JSONObject jsonObject = new JSONObject();
         try {
+            String language = SaveSharedPreference.getAppLanguage(this);
+            //Log.e("Language_Checking","---->"+language);
+
+            String type = "english";
+            if(language.equals("ta")) {
+                type = "tamil";
+            }else if(language.equals("en")) {
+                type = "english";
+
+            }
+
             jsonObject.put("registerid", SaveSharedPreference.getPrefUserRegisterId(mActivity));
+            jsonObject.put("language", type);
+           // "language":"english"
+
         } catch (
                 JSONException e) {
             e.printStackTrace();
