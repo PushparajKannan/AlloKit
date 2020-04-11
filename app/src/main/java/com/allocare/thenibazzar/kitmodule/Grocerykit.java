@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -96,6 +97,9 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
    ImageView badage;
 
    TextView change;
+    String selectedpaymentType;
+    final int UPI_PAYMENT=0;
+
 
    /* @Override
     protected void attachBaseContext(Context newBase) {
@@ -214,8 +218,25 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
                 {
                     if(!TextUtils.isEmpty(addressText.getText().toString().trim()))
                     {
-                        showDialog();
-                        OrderProducts(addressText.getText().toString().trim(),"1");
+
+
+                        int radioButtonID = paymentType.getCheckedRadioButtonId();
+                        View radioButton = paymentType.findViewById(radioButtonID);
+                        int idx = paymentType.indexOfChild(radioButton);
+                        RadioButton r = (RadioButton) paymentType.getChildAt(idx);
+                        selectedpaymentType= r.getText().toString();
+
+                        if(selectedpaymentType.equalsIgnoreCase("Cash"))
+                        {
+                            showDialog();
+                            OrderProducts(addressText.getText().toString().trim(),"1");
+                        }else if(selectedpaymentType.equalsIgnoreCase("Digital"))
+                        {
+                            int total = quantity * pricetotal;
+                           // Log.e("Total Amount","------->"+total);
+                            payUsingPay("1","iamsivaram27@oksbi","Sivaram","Sivaram");
+                        }
+
                     }else {
                         Toast.makeText(mActivity, getResources().getString(R.string.enter_address), Toast.LENGTH_SHORT).show();
                     }
@@ -469,15 +490,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
                     "address":"testing"
             }*/
 
-            int radioButtonID = paymentType.getCheckedRadioButtonId();
 
-            View radioButton = paymentType.findViewById(radioButtonID);
-
-            int idx = paymentType.indexOfChild(radioButton);
-
-            RadioButton r = (RadioButton) paymentType.getChildAt(idx);
-
-            String selectedpaymentType= r.getText().toString();
 
             String link = "http://www.google.com/maps/place/" + String.valueOf(LocationValueModel.getmLatitude()) + "," + String.valueOf(LocationValueModel.getmLongitude());
 
@@ -927,9 +940,77 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
 
 
                     break;
+                case UPI_PAYMENT:
+                    if (data!=null){
+                        String text = data.getStringExtra("response");
+                        ArrayList<String> dataList = new ArrayList<>();
+                        dataList.add(text);
+                        upiPaymentDataOperation(dataList);
+                    } else {
+                        ArrayList<String> dataList = new ArrayList<>();
+                        dataList.add("nothing");
+                        upiPaymentDataOperation(dataList);
+                    }
+                    break;
             }
 
         }
+
+    }
+
+
+    //Sivaram
+    private void payUsingPay(String amount_str, String upi_str, String name_str, String note_str) {
+        Uri uri = Uri.parse("upi://pay").buildUpon()
+                .appendQueryParameter("pa",upi_str)
+                .appendQueryParameter("pn",name_str)
+                .appendQueryParameter("tn",note_str)
+                .appendQueryParameter("am",amount_str)
+                .appendQueryParameter("cu","INR")
+                .build();
+        Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
+        upiPayIntent.setData(uri);
+        Intent chooser = Intent.createChooser(upiPayIntent,"Pay with");
+
+        if (null != chooser.resolveActivity(getPackageManager())){
+            startActivityForResult(chooser,UPI_PAYMENT);
+        }else {
+            Toast.makeText(this,"No UPI app found,please install one to continue",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private void upiPaymentDataOperation(ArrayList<String> data) {
+
+            String str = data.get(0);
+            String paymentCancel = "";
+            if (str == null) str = "discard";
+            String status = "";
+            String approvalRefNo ="";
+            String response[] = str.split("&");
+            for (int i=0;i<response.length;i++){
+                String equalStr[] = response[i].split("=");
+                if (equalStr.length>=2){
+                    if (equalStr[0].toLowerCase().equals("Status".toLowerCase())){
+                        status = equalStr[1].toLowerCase();
+                    }else if (equalStr[0].toLowerCase().equals("ApprovalRefNo".toLowerCase())|| equalStr[0].toLowerCase().equals("tnxRef".toLowerCase())){
+                        approvalRefNo = equalStr[1];
+                    }
+                } else {
+                    paymentCancel = "Payment cancelled by User.";
+                }
+            }
+            if (status.equals("success")){
+                Toast.makeText(Grocerykit.this,"Transaction  Successful.",Toast.LENGTH_SHORT).show();
+                showDialog();
+                OrderProducts(addressText.getText().toString().trim(),"1");
+            }else if ("Payment cancelled by User.".equals(paymentCancel)){
+                Toast.makeText(Grocerykit.this,"Payment cancelled by User.",Toast.LENGTH_SHORT).show();
+                finish();
+            }else {
+                Toast.makeText(Grocerykit.this,"Transaction failed.Please try again",Toast.LENGTH_SHORT).show();
+                finish();
+            }
 
     }
 }

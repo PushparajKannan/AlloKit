@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mActivity = this;
-        SaveSharedPreference.clearAllData(mActivity);
+        //SaveSharedPreference.clearAllData(mActivity);
 
 
 
