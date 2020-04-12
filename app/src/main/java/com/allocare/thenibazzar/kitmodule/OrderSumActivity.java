@@ -105,7 +105,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
     TextView type,description,productTitle,productPrice;
 
-    TextView badageTex;
+    TextView badageTex, items;
 
     ImageView info;
 
@@ -139,6 +139,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
         productPrice = findViewById(R.id.productPrice);
         buyLay = findViewById(R.id.buyLay);
         info = findViewById(R.id.info);
+        items = findViewById(R.id.items);
 
 
         BottomNavigationMenuView bottomNavigationMenuView =
@@ -202,6 +203,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
         languageText.setOnClickListener(this);
         buyLay.setOnClickListener(this);
         info.setOnClickListener(this);
+        items.setOnClickListener(this);
 
     }
 
@@ -338,6 +340,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
 
                 break;
+            case R.id.items:
             case R.id.info:
                 BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance();
                 bottomSheetDialog.show(getSupportFragmentManager(), "Bottom Sheet Dialog Fragment");

@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import com.allocare.thenibazzar.GsingupActivity;
 import com.allocare.thenibazzar.R;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -317,9 +318,14 @@ public class OtpRegisterFragment extends Fragment implements View.OnClickListene
 
                             viewPager.setCurrentItem(1,true);
                         }else {
+                            Toast.makeText(mActivity, "Mobile number already exist. Please Login", Toast.LENGTH_SHORT).show();
 
-                            Toast.makeText(mActivity, Utility.NullCheckJson(response,"message"), Toast.LENGTH_SHORT).show();
+                            Intent  i =new Intent(mActivity, GsingupActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                           // Toast.makeText(mActivity, Utility.NullCheckJson(response,"message"), Toast.LENGTH_SHORT).show();
 
+                            mActivity.finish();
                         }
 
                     }catch (JSONException e)

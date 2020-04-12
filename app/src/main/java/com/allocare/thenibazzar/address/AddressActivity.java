@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,7 +19,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +37,8 @@ import com.allocare.thenibazzar.kitmodule.IGPSActivity;
 import com.allocare.thenibazzar.kitmodule.LocationValueModel;
 import com.allocare.thenibazzar.kitmodule.Utility;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.ArrayList;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
@@ -47,6 +58,16 @@ public class AddressActivity extends AppCompatActivity implements IGPSActivity {
     String adrdress="";
 
     TextView save;
+    ImageView backImg;
+
+    Dialog searchDialog;
+
+    ArrayList<String> cities = new ArrayList<String>();
+
+    ListView citiesList;
+
+    BlueToothShowAdapter adapterCities;
+
 
 
     @Override
@@ -75,6 +96,63 @@ public class AddressActivity extends AppCompatActivity implements IGPSActivity {
         idPinceode = findViewById(R.id.idPinceode);
         state = findViewById(R.id.state);
         save = findViewById(R.id.save);
+        backImg = findViewById(R.id.backImg);
+
+        searchDialog = new Dialog(this);
+
+        //sign_district = findViewById(R.id.sign_district);
+        // sign_district.setText("Select State");
+
+
+        searchDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        searchDialog.setContentView(R.layout.search_dialog);
+        searchDialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+
+        citiesList = searchDialog.findViewById(R.id.stateList);
+
+        adapterCities = new BlueToothShowAdapter(this);
+        adapterCities.setBluetoothList(cities);
+
+        citiesList.setAdapter(adapterCities);
+
+        idPinceode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                searchDialog.show();
+            }
+        });
+
+        citiesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+               /* ArrayList<CitiesModel> tempCenter = new ArrayList<CitiesModel>();
+
+
+                if(cities.get(position)!=null) {
+                    if (helpdata.get(cities.get(position)) != null) {
+                        tempCenter.addAll(helpdata.get(cities.get(position)));
+                    }
+
+                    selectedState.setText(cities.get(position));
+
+
+                }
+
+                adapter.updateTestListAdapter(tempCenter);*/
+
+
+               // selPostion = String.valueOf(position);
+
+                idPinceode.setText(cities.get(position));
+
+                if (searchDialog.isShowing()) {
+                    searchDialog.dismiss();
+                }
+
+            }
+        });
 
 
         currentLocation.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +181,13 @@ public class AddressActivity extends AppCompatActivity implements IGPSActivity {
             }
         });
 
+
+        backImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddressActivity.super.onBackPressed();
+            }
+        });
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -335,6 +420,85 @@ public class AddressActivity extends AppCompatActivity implements IGPSActivity {
 
     @Override
     public void displayGPSSettingsDialog() {
+
+    }
+
+    public class BlueToothShowAdapter extends BaseAdapter
+    {
+
+        private Context context;
+
+        ArrayList<String> bluetoothList;
+
+
+
+
+        public BlueToothShowAdapter(Context context) {
+            this.context = context;
+        }
+
+
+        public void setBluetoothList(ArrayList<String> bluetoothList) {
+            this.bluetoothList = bluetoothList;
+            notifyDataSetChanged();
+        }
+
+        public int getCount() {
+            return bluetoothList == null ? 0 : bluetoothList.size();
+        }
+
+        @Override
+        public Object getItem(int arg0) {
+            return bluetoothList != null ? bluetoothList.get(arg0) : null;
+        }
+
+        @Override
+        public long getItemId(int arg0) {
+            return arg0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder =null;
+            if (convertView==null){
+                convertView = LayoutInflater.from(context).inflate(R.layout.layout_sate, null);
+                viewHolder=new ViewHolder();
+                viewHolder.name = (TextView) convertView.findViewById(R.id.name);
+                convertView.setTag(viewHolder);
+            }else {
+                viewHolder= (ViewHolder) convertView.getTag();
+            }
+            setDateToView(position,viewHolder);
+            // //setItemClickEvent(position,viewHolder);
+            return convertView;
+        }
+
+        private void setDateToView(int position, ViewHolder viewHolder) {
+
+            if (bluetoothList.get(position) != null) {
+                viewHolder.name.setText(bluetoothList.get(position));
+
+            }
+
+
+
+
+
+
+
+
+            //if(bluetoothList.get(position))
+
+        }
+
+
+        class  ViewHolder {
+            public TextView name=null;
+            public TextView text_mac=null;
+            public ImageView xinhao=null;
+        }
+
+
 
     }
 }

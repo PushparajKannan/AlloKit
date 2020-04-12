@@ -59,4 +59,5 @@
     <string name="new_address_saved">New Address Saved</string>
     <string name="order_cancel">Your order removed successfully</string>
     <string name="current_location">Current location</string>
+    <string name="item_list">Items list>></string>
 </resources>
