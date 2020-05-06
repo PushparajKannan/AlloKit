@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Theni Sandhai</string>
+    <string name="app_name">AlloKit</string>
     <string name="address">Address</string>
     <string name="LocationisNotEnable">Please turn on GPS</string>
     <string name="needtoenable">Need to enable for automatic fetch address</string>
@@ -12,7 +12,7 @@
     <string name="pay_type">Payment Type</string>
     <string name="addres_info">Address Information</string>
     <string name="orders">Orders</string>
-    <string name="ReplyFromPoliceOfficers">Reply From Theni Bazaar</string>
+    <string name="ReplyFromPoliceOfficers">Reply From AlloKit</string>
     <string name="Details">Details</string>
     <string name="Notification">Notification</string>
     <string name="Date">Date</string>
@@ -41,7 +41,7 @@
     <string name="verify_your_otp">Please verify your OTP</string>
     <string name="verifyOTP">VerifyOTP</string>
     <string name="otp_miss_match">OTP Mis matched</string>
-    <string name="app_title">Theni Sandhai</string>
+    <string name="app_title">AlloKit</string>
     <string name="verifide_otp">OTP Verified Successfully</string>
     <string name="cancel">Cancel</string>
     <string name="pincode">Pincode</string>
@@ -60,4 +60,17 @@
     <string name="order_cancel">Your order removed successfully</string>
     <string name="current_location">Current location</string>
     <string name="item_list">Items list>></string>
+    <string name="select">Select</string>
+    <string name="digital">Digital (UPI)</string>
+    <string name="cash">Cash</string>
+    <string name="enter_valid_pincode">Would not able to buy for this PIN code</string>
+    <string name="coming_soon">Coming Soon</string>
+    <string name="head2">Economy pack</string>
+    <string name="dummy_content1">Economy pack Details</string>
+    <string name="head3">Sanitary pack</string>
+    <string name="dummy_content2">Sanitary pack Details</string>
+    <string name="select_pin">Select PIN Code</string>
+    <string name="empty_order">Your Order is Empty</string>
+    <string name="my_cart">My Cart</string>
+    <string name="remove">Remove</string>
 </resources>

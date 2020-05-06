@@ -11,7 +11,6 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@mipmap/backimage"
         android:scaleType="fitXY"/>
 
     <ImageView
@@ -20,5 +19,5 @@
         android:id="@+id/imageView2"
         android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/thenibazaarl" />
+        android:src="@drawable/allokitaplogo" />
 </RelativeLayout>

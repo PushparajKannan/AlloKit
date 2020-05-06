@@ -92,7 +92,7 @@
                     android:id="@+id/avatharImg"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/grocerry"
+                    android:src="@drawable/emptycart"
                     android:scaleType="centerCrop"
                     />
 

@@ -5,11 +5,29 @@
     android:background="@android:color/transparent"
     android:orientation="vertical">
 
-    <com.allocare.thenibazzar.kitmodule.FirstImageView
+    <com.allocare.allokit.kitmodule.FirstImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
+        android:visibility="gone"
         android:src="@drawable/itemlists"/>
+
+
+
+    <RelativeLayout
+        android:id="@+id/progressLay"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        >
+
+
+        <ProgressBar
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
 
 
 

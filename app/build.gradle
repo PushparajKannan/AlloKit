@@ -1,23 +1,33 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        signed {
+            storeFile file('/home/webtoall/AndriodProjects/SavemomProjects/Allokit/KeyStore/allokitkeyjks.jks')
+            storePassword 'allokitkeyjks'
+            keyAlias = 'allokitkeyjks'
+            keyPassword 'allokitkeyjks'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
 
     defaultConfig {
-        applicationId "com.allocare.thenibazzar"
-        minSdkVersion 14
+        applicationId "com.allocare.allokit"
+        minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.signed
         }
     }
 
@@ -54,5 +64,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     implementation 'com.google.android.gms:play-services-auth:18.0.0'
+
+    implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
+
 
 }

@@ -226,7 +226,7 @@
                             android:id="@+id/image"
                             android:layout_width="match_parent"
                             android:layout_height="220dp"
-                            android:src="@drawable/grocerry"
+                            android:src="@drawable/emptycart"
 
                             />
 
@@ -495,7 +495,7 @@
                             android:id="@+id/cash"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cash"
+                            android:text="@string/cash"
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
                             android:textSize="14sp"
@@ -506,7 +506,7 @@
                             android:id="@+id/digital"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Digital"
+                            android:text="@string/digital"
                             android:layout_marginRight="16dp"
                             android:fontFamily="@font/psr"
                             android:textSize="14sp"

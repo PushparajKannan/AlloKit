@@ -243,6 +243,8 @@
                     android:inputType="number"
                     android:digits="0123456789"
                     android:maxLength="6"
+                    android:focusable="false"
+                    android:clickable="true"
                     android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
                     />
 

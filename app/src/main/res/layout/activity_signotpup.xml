@@ -36,7 +36,7 @@
     </RelativeLayout>
 
 
-    <com.allocare.thenibazzar.kitmodule.CustomViewPager
+    <com.allocare.allokit.kitmodule.CustomViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

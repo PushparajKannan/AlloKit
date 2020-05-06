@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:shimmer="http://schemas.android.com/apk/res-auto"
     tools:context=".kitmodule.MyOrderActivity">
 
     <RelativeLayout
@@ -97,10 +98,64 @@
         android:layout_height="match_parent"
         android:layout_below="@id/title_lay">
 
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_view_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            shimmer:duration="800">
+
+            <!-- Adding 7 rows of placeholders -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <include layout="@layout/myorder_list" />
+                <include layout="@layout/myorder_list" />
+                <include layout="@layout/myorder_list" />
+                <include layout="@layout/myorder_list" />
+                <include layout="@layout/myorder_list" />
+                <include layout="@layout/myorder_list" />
+                <include layout="@layout/myorder_list" />
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+
+        <LinearLayout
+            android:id="@+id/emptylay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/emptycart"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/empty_order"
+                android:fontFamily="@font/psr"
+                android:layout_gravity="center_horizontal"
+                android:textSize="24sp"/>
+
+
+
+        </LinearLayout>
 
 
        <!-- <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

@@ -11,7 +11,7 @@
     <string name="pay_type">ஆர்டர் வகை</string>
     <string name="addres_info">முகவரி தகவல்</string>
     <string name="orders">ஆர்டர்கள்</string>
-    <string name="ReplyFromPoliceOfficers">தேனி சந்தை பதில்</string>
+    <string name="ReplyFromPoliceOfficers">AlloKit பதில்</string>
     <string name="Details">விவரங்கள்</string>
     <string name="Notification">அறிவிப்பு</string>
     <string name="Date">தேதி</string>
@@ -40,7 +40,7 @@
     <string name="verify_your_otp">உங்கள் OTP ஐ சமர்ப்பிக்கவும்</string>
     <string name="verifyOTP">OTP ஐ சமர்ப்பிக்கவும்</string>
     <string name="otp_miss_match">OTP தவறாக பொருந்தியது</string>
-    <string name="app_title">தேனி சந்தை</string>
+    <string name="app_title">AlloKit</string>
     <string name="verifide_otp">OTP சரிபார்க்கப்பட்டது</string>
     <string name="cancel">ரத்துசெய்</string>
     <string name="pincode">அஞ்சல் குறியீடு</string>
@@ -57,6 +57,19 @@
     <string name="change">மாற்றம்</string>
     <string name="new_address_saved">புதிய முகவரி சேமிக்கப்பட்டது</string>
     <string name="order_cancel">உங்கள் ஆர்டர் வெற்றிகரமாக அகற்றப்பட்டது</string>
-    <string name="current_location">Current location</string>
-    <string name="item_list">Items list>></string>
+    <string name="current_location">தற்போதைய இடம்</string>
+    <string name="item_list">பொருட்களின் பட்டியல் >></string>
+    <string name="select">தேர்ந்தெடு</string>
+    <string name="digital">Digital (UPI)</string>
+    <string name="cash">Cash</string>
+    <string name="enter_valid_pincode">இந்த PIN குறியீட்டால் வாங்க முடியாது</string>
+    <string name="coming_soon">விரைவில்</string>
+    <string name="head2">பொருளாதாரம் கட்டிடு</string>
+    <string name="dummy_content1">பொருளாதாரம் கட்டிடு</string>
+    <string name="head3">சானிட்டரி பேக்</string>
+    <string name="dummy_content2">சானிட்டரி பேக்</string>
+    <string name="select_pin">அஞ்சல் குறியீட்டைத் தேர்ந்தெடுக்கவும்</string>
+    <string name="empty_order">உங்கள் ஆர்டர் காலியாக உள்ளது</string>
+    <string name="my_cart">My Cart</string>
+    <string name="remove">Remove</string>
 </resources>
