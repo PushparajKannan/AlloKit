@@ -483,7 +483,7 @@
                 android:layout_marginRight="16dp"
                 android:text="@string/pay_type"
                 android:fontFamily="@font/ps"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 />
             <View
                 android:layout_width="match_parent"
