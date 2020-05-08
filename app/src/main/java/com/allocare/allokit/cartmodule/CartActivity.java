@@ -1,24 +1,49 @@
 package com.allocare.allokit.cartmodule;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.allocare.allokit.R;
+import com.allocare.allokit.database.AppDatabase;
+import com.allocare.allokit.database.AppExecutors;
 import com.allocare.allokit.kitmodule.SaveSharedPreference;
+import com.allocare.allokit.kitmodule.Utility;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +52,7 @@ public class CartActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     MyCartListAdapter adpater;
-    private ArrayList<CartModel> lists = new ArrayList<CartModel>();
+    private List<CartModel> lists = new ArrayList<CartModel>();
 
 
     ProgressDialog dialog ;
@@ -39,6 +64,13 @@ public class CartActivity extends AppCompatActivity {
   //  ShimmerFrameLayout shimmer;
 
     LinearLayout emptylay;
+    private AppDatabase mDb;
+
+    TextView totalprice;
+
+    int cartTotalRupees = 0;
+    RelativeLayout bottomLay;
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -54,6 +86,7 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
         mActivity=this;
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
 
         dialog = new ProgressDialog(mActivity);
@@ -61,8 +94,14 @@ public class CartActivity extends AppCompatActivity {
 
 
         backImg = findViewById(R.id.backImg);
+        recyclerView = findViewById(R.id.recyclerView);
         //shimmer = findViewById(R.id.shimmer_view_container);
         emptylay = findViewById(R.id.emptylay);
+        bottomLay = findViewById(R.id.bottomLay);
+
+        totalprice = findViewById(R.id.totalprice);
+
+        //totalprice.setText(getResources().getString(R.string.rupeesString, getResources().getInteger(R.integer.some_integer)));
 
 
         adpater =  new MyCartListAdapter(lists,this);
@@ -71,7 +110,7 @@ public class CartActivity extends AppCompatActivity {
         recyclerView.setAdapter(adpater);
 
 
-        showDialog();
+      //  showDialog();
        // getProducts();
 
 
@@ -82,6 +121,36 @@ public class CartActivity extends AppCompatActivity {
             }
         });
 
+
+
+
+
+        /*
+        //SWIPE DELETE
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            // Called when a user swipes left or right on a ViewHolder
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                // Here is where you'll implement swipe to delete
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        int position = viewHolder.getAdapterPosition();
+                        List<Person> tasks = mAdapter.getTasks();
+                        mDb.personDao().delete(tasks.get(position));
+
+                    }
+                });
+            }
+        }).attachToRecyclerView(mRecyclerView);*/
+
+        retrieveTasks();
+
     }
 
     public class MyCartListAdapter extends RecyclerView.Adapter {
@@ -90,14 +159,25 @@ public class CartActivity extends AppCompatActivity {
 
         public static final int cutsomViewcount= 0;
         Context mContext;
-        private ArrayList<CartModel> post = new ArrayList<CartModel>();
+        private List<CartModel> post = new ArrayList<CartModel>();
 
 
-        public MyCartListAdapter(ArrayList<CartModel> data, Context context) {
+        public MyCartListAdapter(List<CartModel> data, Context context) {
             this.post = data;
             this.mContext = context;
             // viewPool = new RecyclerView.RecycledViewPool();
         }
+
+        public void setTasks(List<CartModel> personList) {
+            this.post = personList;
+            notifyDataSetChanged();
+        }
+
+        public List<CartModel> getTasks() {
+            return this.post;
+        }
+
+
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -213,7 +293,7 @@ public class CartActivity extends AppCompatActivity {
 
                             PostTypeViewHolder viewHolder = (PostTypeViewHolder) holder;
                             if (tempdata != null) {
-                             //   viewHolder.firstBind(tempdata, listPosition - cutsomViewcount);
+                                viewHolder.firstBind(tempdata, listPosition - cutsomViewcount);
                             }
 
                         } else {
@@ -257,11 +337,11 @@ public class CartActivity extends AppCompatActivity {
                                     if (tempdata != null) {
 
 
-                                       // viewHolder.firstBind(tempdata, position - cutsomViewcount);
+                                        viewHolder.firstBind(tempdata, position - cutsomViewcount);
 
 
                                     } else {
-                                      //  viewHolder.firstBind(tempdata, position - cutsomViewcount);
+                                        viewHolder.firstBind(tempdata, position - cutsomViewcount);
                                     }
                                 } else {
                                     holder.itemView.getTag(position - cutsomViewcount);
@@ -300,10 +380,17 @@ public class CartActivity extends AppCompatActivity {
         public class PostTypeViewHolder extends RecyclerView.ViewHolder {
 
 
-            ImageView avatharImg;
+            ImageView avatharImg,increase, decrease;
 
-            TextView date, title, quantity,totalprice,status, orderid;
-            CardView cancel;
+            TextView date, title, quantity,totalprice,status, orderid, quantityText;
+            CardView cancel,removeLay;
+
+            public int quantityValue=1;
+            public int pricetotal=1000;
+
+            public List<CartModel.Prices> priceList = new ArrayList<CartModel.Prices>();
+
+            CheckBox checkbox;
 
 
             public PostTypeViewHolder(View itemView) {
@@ -311,13 +398,19 @@ public class CartActivity extends AppCompatActivity {
 
 
                 quantity = itemView.findViewById(R.id.quantity);
-                date = itemView.findViewById(R.id.date);
+                quantityText = itemView.findViewById(R.id.quantityText);
+                increase = itemView.findViewById(R.id.increase);
+                decrease = itemView.findViewById(R.id.decrease);
+                checkbox = itemView.findViewById(R.id.checkbox);
+                removeLay = itemView.findViewById(R.id.removeLay);
+
+             //   date = itemView.findViewById(R.id.date);
                 title = itemView.findViewById(R.id.title);
                 totalprice = itemView.findViewById(R.id.totalprice);
-                status = itemView.findViewById(R.id.status);
+               // status = itemView.findViewById(R.id.status);
                 avatharImg = itemView.findViewById(R.id.avatharImg);
-                orderid = itemView.findViewById(R.id.orderid);
-                cancel = itemView.findViewById(R.id.buyLay);
+              //  orderid = itemView.findViewById(R.id.orderid);
+             //   cancel = itemView.findViewById(R.id.buyLay);
 
 
 
@@ -334,28 +427,158 @@ public class CartActivity extends AppCompatActivity {
 
             }
 
+            private void incrementValue(CartModel tempdata) {
 
-           /* void firstBind(final CartModel tempdata, int listPosition) {
+                quantityValue++;
 
+                quantity.setText(quantityValue +" x " +tempdata.getProductName());
+
+                quantityText.setText(String.valueOf(quantityValue));
+
+                pricetotal = getQuatityPrice(tempdata);
+
+                int total = quantityValue * pricetotal;
+
+                totalprice.setText(getResources().getString(R.string.rupeesString, total));
+
+                tempdata.setQuantity(String.valueOf(quantityValue));
+                tempdata.setTotalprice(String.valueOf(total));
+
+                if(tempdata.isSelected()) {
+                    calculatePrice();
+
+                }
+            }
+
+            private void decrementValue(CartModel tempdata)
+            {
+                if(quantityValue>1) {
+                    quantityValue--;
+
+
+                    quantity.setText(quantityValue +" x " +tempdata.getProductName());
+
+                    quantityText.setText(String.valueOf(quantityValue));
+
+                    pricetotal = getQuatityPrice(tempdata);
+
+                    int total = quantityValue * pricetotal;
+
+                    totalprice.setText(getResources().getString(R.string.rupeesString, total));
+
+                    tempdata.setQuantity(String.valueOf(quantityValue));
+                    tempdata.setTotalprice(String.valueOf(total));
+
+
+                    if(tempdata.isSelected()) {
+                        calculatePrice();
+
+                    }
+
+                }
+
+            }
+
+
+            private int getQuatityPrice(CartModel tempdata)
+            {
+                int p=Integer.parseInt(tempdata.getPrice());
+
+                for(int i = 0 ;i<priceList.size();i++)
+                {
+                    CartModel.Prices cpdata = priceList.get(i);
+
+                    Log.e("above","-->"+cpdata.getAbove());
+                    Log.e("below","-->"+cpdata.getBelow());
+                    Log.e("price","-->"+cpdata.getPrice());
+
+
+                    if(quantityValue >= cpdata.getAbove() && quantityValue < cpdata.getBelow()) {
+                         p = cpdata.getPrice();
+                         break;
+                    }
+                }
+
+
+                return p;
+            }
+
+
+            void firstBind(final CartModel tempdata, int listPosition) {
+
+
+                try {
+                    JSONObject pricelis = new JSONObject(tempdata.getPricelists());
+
+                    Log.e("priceData","-->"+pricelis);
+
+                    JSONArray data  = pricelis.getJSONArray("preice");
+                    if(data.length()>0)
+                    {
+                        for (int i=0;i<data.length();i++)
+                        {
+                            JSONObject re = data.getJSONObject(i);
+
+
+                            CartModel.Prices cp = new CartModel.Prices();
+
+                            cp.setAbove(re.getInt("above"));
+                            cp.setBelow(re.getInt("below"));
+                            cp.setPrice(re.getInt("price"));
+                            priceList.add(cp);
+
+                        }
+
+                        Log.e("PricelistSize","-->"+priceList.size());
+
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                try{
+                    quantityValue = Integer.parseInt(tempdata.getQuantity().trim());
+                    pricetotal = Integer.parseInt(tempdata.getTotalprice().trim());
+                }catch (Exception e)
+                {
+
+                }
+                quantityText.setText(tempdata.getQuantity().trim());
+
+                totalprice.setText(getResources().getString(R.string.rupeesString, pricetotal));
+
+
+                checkbox.setChecked(true);
 
                 quantity.setText(tempdata.getQuantity() +" x " +tempdata.getProductName());
-                date.setText(tempdata.getDate());
-                totalprice.setText(tempdata.getTotalprice());
-                status.setText(tempdata.getOrderStatus());
+                //date.setText(tempdata.getDate());
+               // status.setText(tempdata.getOrderStatus());
                 title.setText(tempdata.getProductName());
 
-                orderid.setText(tempdata.getOrderid());
+              //  orderid.setText(tempdata.getOrderid());
 
-                cancel.setOnClickListener(new View.OnClickListener() {
+                increase.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        incrementValue(tempdata);
+                    }
+                });
+
+                decrease.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        decrementValue(tempdata);
+                    }
+                });
+
+                removeLay.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-
-                        showDialog();
-                        setProductsCancel(tempdata.getOrderid(),listPosition);
-
-                        // post.notify();
-                        // notifyDataSetChanged();
+                        removeClicked(listPosition);
                     }
                 });
 
@@ -400,8 +623,25 @@ public class CartActivity extends AppCompatActivity {
                 }
 
 
+                checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-            }*/
+                        tempdata.setSelected(isChecked);
+
+                        if(isChecked)
+                        {
+                           itemSelected(listPosition);
+                        }else {
+                            itemUnSelected(listPosition);
+                        }
+
+                    }
+                });
+
+
+
+            }
         }
 
 
@@ -425,5 +665,164 @@ public class CartActivity extends AppCompatActivity {
             if(dialog.isShowing())
                 dialog.dismiss();
         }
+    }
+
+
+    private void retrieveTasks() {
+        mDb.cartDao().loadAllPersons().observe(this, new Observer<List<CartModel>>() {
+            @Override
+            public void onChanged(@Nullable List<CartModel> people) {
+                adpater.setTasks(people);
+
+               // calculatePrice();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(people.size()>0) {
+                            calculatePrice();
+                            CancelEmpty();
+                        }else {
+                            ShowEmpty();
+                        }
+                    }
+                });
+
+
+
+            }
+        });
+    }
+
+
+    public void itemSelected(int pos) {
+        //calculatePrice(pos);
+
+        calculatePrice();
+
+    }
+
+    public void itemUnSelected(int pos)
+    {
+        calculatePrice();
+
+    }
+
+    public void removeClicked(int position)
+    {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //int position = viewHolder.getAdapterPosition();
+                List<CartModel> tasks = adpater.getTasks();
+                mDb.cartDao().delete(tasks.get(position));
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(tasks.size()>0) {
+                            calculatePrice();
+                            CancelEmpty();
+                        }else {
+                            ShowEmpty();
+                        }
+
+                        Toast.makeText(mActivity, getResources().getString(R.string.item_removed), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+        });
+    }
+
+    private void calculatePrice() {
+        if (adpater != null) {
+            List<CartModel> tasks = adpater.getTasks();
+
+            int totalamount = 0;
+
+            for (int i = 0; i < tasks.size(); i++) {
+
+                if(tasks.get(i).isSelected()) {
+                    try {
+                        totalamount += Integer.parseInt(tasks.get(i).getTotalprice());
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+
+            cartTotalRupees = totalamount;
+
+           // totalamount = cartTotalRupees;
+
+            if (totalprice != null)
+                totalprice.setText(getResources().getString(R.string.rupeesString, totalamount));
+
+        }else {
+            Toast.makeText(mActivity, "nulladapter", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /*private void calculatePrice(int pos) {
+        if (adpater != null) {
+            List<CartModel> tasks = adpater.getTasks();
+
+            int totalamount = 0;
+
+            for (int i = 0; i < tasks.size(); i++) {
+
+                if(i!=pos) {
+                    try {
+                        totalamount += Integer.parseInt(tasks.get(i).getTotalprice());
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+
+
+            if (totalprice != null)
+                totalprice.setText(getResources().getString(R.string.rupeesString, totalamount));
+
+        }
+    }*/
+
+    public void ShowEmpty()
+    {
+        if(emptylay!=null)
+        {
+            if(emptylay.getVisibility() !=View.VISIBLE) {
+
+
+                emptylay.setVisibility(View.VISIBLE);
+            }
+        }
+
+
+
+        if(bottomLay != null) {
+            if(bottomLay.getVisibility() == View.VISIBLE) {
+                bottomLay.setVisibility(View.GONE);
+            }
+        }
+
+
+    }
+
+    public void CancelEmpty()
+    {
+        if(emptylay!=null) {
+            if(emptylay.getVisibility() == View.VISIBLE) {
+                emptylay.setVisibility(View.GONE);
+            }
+        }
+
+        if(bottomLay != null) {
+            if(bottomLay.getVisibility() != View.VISIBLE) {
+                bottomLay.setVisibility(View.VISIBLE);
+            }
+        }
+
     }
 }

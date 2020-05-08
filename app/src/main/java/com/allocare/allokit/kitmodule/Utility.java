@@ -21,6 +21,9 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -333,5 +336,16 @@ public class Utility {
             }
         }
     };*/
+
+   public static String getCurrentDate()
+   {
+       Date c = Calendar.getInstance().getTime();
+       System.out.println("Current time => " + c);
+
+       SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+       String formattedDate = df.format(c);
+
+       return formattedDate;
+   }
 
 }

@@ -86,6 +86,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/psr"
                         android:textSize="14sp"
+                        android:visibility="invisible"
                         android:text="#Baz21"/>
 
 
@@ -97,7 +98,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="-8dp"/>
+                    android:layout_marginRight="-8dp"
+                    android:checked="true"/>
 
             </RelativeLayout>
 
@@ -190,7 +192,7 @@
 
 
 
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -223,7 +225,7 @@
 
 
 
-            <!-- <androidx.cardview.widget.CardView
+            &lt;!&ndash; <androidx.cardview.widget.CardView
                  android:id="@+id/cardView"
                  android:layout_width="80dp"
                  android:layout_height="80dp"
@@ -243,12 +245,12 @@
                      android:visibility="visible"/>
 
 
-             </androidx.cardview.widget.CardView>-->
+             </androidx.cardview.widget.CardView>&ndash;&gt;
 
 
 
 
-        </LinearLayout>
+        </LinearLayout>-->
 
 
         <LinearLayout
@@ -429,14 +431,80 @@
                 android:textColor="@color/colorPrimary"
                 />
 
-
-
             <androidx.cardview.widget.CardView
-                android:id="@+id/buyLay"
                 android:layout_width="wrap_content"
                 android:layout_alignParentEnd="true"
                 app:cardCornerRadius="4dp"
                 android:layout_marginRight="16dp"
+                android:layout_centerVertical="true"
+                app:cardBackgroundColor="@color/colorPrimary"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <ImageView
+                        android:id="@+id/increase"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:padding="6dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:tint="@color/colorWhite"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:src="@drawable/ic_add_black_24dp"/>
+
+                    <TextView
+                        android:id="@+id/quantityText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_gravity="center"
+                        android:textSize="14sp"
+                        android:padding="8dp"
+                        android:maxLength="3"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/psr"
+                        android:textColor="@color/colorWhite"/>
+
+                    <ImageView
+                        android:id="@+id/decrease"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:padding="6dp"
+                        android:layout_weight="1"
+                        android:tint="@color/colorWhite"
+                        android:layout_gravity="center"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:src="@drawable/ic_remove_black_24dp"/>
+
+
+                </LinearLayout>
+
+
+
+
+
+            </androidx.cardview.widget.CardView>
+
+
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/removeLay"
+                android:layout_width="wrap_content"
+                android:layout_alignParentStart="true"
+                app:cardCornerRadius="4dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
                 android:layout_centerVertical="true"
                 app:cardBackgroundColor="@color/colorPrimary"
                 android:layout_height="wrap_content">

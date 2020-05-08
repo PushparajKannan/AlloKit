@@ -72,4 +72,11 @@
     <string name="empty_order">உங்கள் ஆர்டர் காலியாக உள்ளது</string>
     <string name="my_cart">My Cart</string>
     <string name="remove">Remove</string>
+    <string name="mycart">MyCart</string>
+    <string name="add_cart">Add Cart</string>
+    <string name="items_added_cart">"Items Added to Your Cart "</string>
+    <string name="item_removed">Item Removed Successfully</string>
+    <string name="rupeesString">Rs: %d</string>
+    <string name="empty_cart">Your Cart is Empty</string>
+
 </resources>

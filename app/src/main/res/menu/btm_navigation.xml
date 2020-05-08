@@ -11,9 +11,16 @@
         android:title="@string/title_notifications" />
 
     <item
-        android:id="@+id/navigation_cart"
+        android:id="@+id/navigation_mycart"
         android:icon="@drawable/ic_shopping_cart_black_24dp"
+        android:title="@string/mycart" />
+
+    <item
+        android:id="@+id/navigation_cart"
+        android:icon="@drawable/ic_shop_black_24dp"
         android:title="@string/title_mycart" />
+
+
 
     <item
         android:id="@+id/navigation_profile"

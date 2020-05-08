@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
@@ -38,6 +39,9 @@ import androidx.viewpager.widget.ViewPager;
 import com.allocare.allokit.R;
 import com.allocare.allokit.address.BottomSheetFragment;
 import com.allocare.allokit.address.UpdateApp;
+import com.allocare.allokit.cartmodule.CartActivity;
+import com.allocare.allokit.cartmodule.CartModel;
+import com.allocare.allokit.database.AppDatabase;
 import com.allocare.allokit.notification.NotificationActivity;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -81,6 +85,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
     ArrayList<String> banner = new ArrayList<>();
     View badge = null;
+    View cartbadge = null;
 
     ViewPager pager;
     private static final int PERMISSION_REQUEST_CODE_MAIN = 300;
@@ -101,6 +106,8 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
     private GPS gps;
 
+    private AppDatabase mDb;
+
 
     ArrayList<GroceryKitModule> data = new ArrayList<GroceryKitModule>();
 
@@ -118,6 +125,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
 
     TextView badageTex;
+    TextView cartbadageTex;
 
     UpdateApp updateApp;
 
@@ -140,8 +148,8 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_sum);
-        this.registerReceiver(this.mConnReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         mActivity = this;
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
         getPINCode();
         dialog = new ProgressDialog(mActivity);
@@ -167,6 +175,15 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
         badge = LayoutInflater.from(this).inflate(R.layout.notification_badge, itemView, true);
 
         badageTex = badge.findViewById(R.id.notifications_badge);
+
+
+
+        View vs = bottomNavigationMenuView.getChildAt(2);
+        BottomNavigationItemView itemViewss = (BottomNavigationItemView) vs;
+
+        cartbadge = LayoutInflater.from(this).inflate(R.layout.cart_badge, itemViewss, true);
+
+        cartbadageTex = cartbadge.findViewById(R.id.cartbadge_badge);
 
 
         bottomLay.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
@@ -241,6 +258,15 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
+    @Override
+    protected void onPause() {
+
+        this.unregisterReceiver(this.mConnReceiver);
+
+        super.onPause();
+
+    }
+
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -265,7 +291,14 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
                             return true;
 
-                            case R.id.navigation_profile:
+                        case R.id.navigation_mycart:
+
+                            Intent v = new Intent(mActivity, CartActivity.class);
+                            startActivity(v);
+
+                            return true;
+
+                        case R.id.navigation_profile:
                                // updateApp.show();
 
 
@@ -767,6 +800,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     Map<String,String> headers = new HashMap<>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
                     headers.put("token", SaveSharedPreference.getPrefUserToken(mActivity));
                     Log.e("Header",""+headers);
 
@@ -821,6 +855,10 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
 
         if(bottomLay!=null)
             bottomLay.setSelectedItemId(R.id.navigation_home);
+
+        this.registerReceiver(this.mConnReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
+        getCartCount();
     }
 
     private void getNotifications()
@@ -1693,6 +1731,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     Map<String,String> headers = new HashMap<>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
                     headers.put("token", SaveSharedPreference.getPrefUserToken(mActivity));
                     Log.e("Header",""+headers);
 
@@ -1727,6 +1766,48 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
         }catch (Exception e)
         {
             e.printStackTrace();
+        }
+    }
+
+    public void getCartCount()
+    {
+        if(mDb!=null) {
+
+            mDb.cartDao().loadAllPersons().observe(this, new Observer<List<CartModel>>() {
+                @Override
+                public void onChanged(@Nullable List<CartModel> people) {
+                    //adpater.setTasks(people);
+
+                    if(people.size()>0)
+                    {
+                        if(cartbadageTex!=null) {
+                            cartbadageTex.setVisibility(View.VISIBLE);
+                            cartbadageTex.setText(String.valueOf(people.size()));
+                        }
+
+                    }else {
+
+                        if(cartbadageTex!=null)
+                            cartbadageTex.setVisibility(View.INVISIBLE);
+                    }
+
+
+
+                }
+            });
+
+            /*mDb.cartDao().getCartViews(false).observe(this, new Observer<List<CartModel>>() {
+                @Override
+                public void onChanged(List<CartModel> cartModels) {
+
+                    if (cartModels.size() > 0) {
+
+                    }else {
+
+                    }
+
+                }
+            });*/
         }
     }
 
