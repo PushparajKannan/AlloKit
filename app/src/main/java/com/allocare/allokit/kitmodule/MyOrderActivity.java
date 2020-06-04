@@ -379,7 +379,8 @@ public class MyOrderActivity extends AppCompatActivity {
 
                 quantity.setText(tempdata.getQuantity() +" x " +tempdata.getProductName());
                 date.setText(tempdata.getDate());
-                totalprice.setText(tempdata.getTotalprice());
+               // totalprice.setText(tempdata.getTotalprice());
+                totalprice.setText(getResources().getString(R.string.rupeesString,Integer.parseInt(tempdata.getTotalprice().trim())));
                 status.setText(tempdata.getOrderStatus());
                 title.setText(tempdata.getProductName());
 

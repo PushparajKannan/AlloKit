@@ -1,5 +1,6 @@
 package com.allocare.allokit.cartmodule;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverter;
@@ -31,6 +32,7 @@ public class CartModel {
     String address;
     String pincode;
     boolean isSelected;
+
 
     /*@TypeConverters(LanguageConverter.class)
     List<Prices> pricelist =new ArrayList<>();*/

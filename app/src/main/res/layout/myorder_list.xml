@@ -419,6 +419,7 @@
                 android:layout_alignParentEnd="true"
                 app:cardCornerRadius="4dp"
                 android:layout_marginRight="16dp"
+                android:visibility="gone"
                 android:layout_centerVertical="true"
                 app:cardBackgroundColor="@color/colorPrimary"
                 android:layout_height="wrap_content">

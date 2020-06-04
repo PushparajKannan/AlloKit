@@ -19,7 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="Q">
-        <activity android:name=".cartmodule.CartActivity"></activity>
+        <activity android:name=".cartmodule.CartActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".address.AddressActivity"
             android:screenOrientation="portrait" />

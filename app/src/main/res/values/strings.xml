@@ -81,4 +81,5 @@
 
     <string name="rupeesString">Rs: %d</string>
     <string name="empty_cart">Your Cart is Empty</string>
+    <string name="selct_item">Please select cart items</string>
 </resources>

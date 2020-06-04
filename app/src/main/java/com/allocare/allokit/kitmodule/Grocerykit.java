@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -39,6 +40,7 @@ import com.allocare.allokit.address.AddressActivity;
 import com.allocare.allokit.cartmodule.CartModel;
 import com.allocare.allokit.database.AppDatabase;
 import com.allocare.allokit.database.AppExecutors;
+import com.allocare.allokit.database.CartDao;
 import com.allocare.allokit.database.CountryLangs;
 import com.allocare.allokit.notification.NotificationActivity;
 import com.android.volley.AuthFailureError;
@@ -88,6 +90,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
     private GPS gps;
     private static final int PERMISSION_REQUEST_CODE_MAIN = 300;
 
+    public List<CartModel.Prices> priceList = new ArrayList<CartModel.Prices>();
 
     ArrayList<GroceryKitModule> data = new ArrayList<GroceryKitModule>();
 
@@ -103,7 +106,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
 
    ImageView badage;
 
-   TextView change;
+   TextView change, description;
     String selectedpaymentType;
     final int UPI_PAYMENT=0;
 
@@ -113,6 +116,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
 
 
     String productId="";
+    JSONArray priceArray;
     private AppDatabase mDb;
 
 
@@ -156,6 +160,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
 
         dialog = new ProgressDialog(mActivity);
         dialog.setMessage(getResources().getString(R.string.loading));
+        dialog.setCancelable(false);
         getPINCode();
         alert = new AlertDialog.Builder(mActivity)
                 .setTitle("Conform Order")  // GPS not found
@@ -174,6 +179,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
         image = findViewById(R.id.image);
         badage = findViewById(R.id.badage);
         change = findViewById(R.id.change);
+        description = findViewById(R.id.description);
 
 
         totalprice = findViewById(R.id.totalprice);
@@ -293,6 +299,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
                     {
 
 
+
                         if(isValidPincode(pinCode)) {
 
                             int radioButtonID = paymentType.getCheckedRadioButtonId();
@@ -303,7 +310,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
 
                             if (selectedpaymentType.equalsIgnoreCase(getResources().getString(R.string.cash))) {
                                 showDialog();
-                                OrderProducts(addressText.getText().toString().trim(), productId);
+                                OrderProducts(addressText.getText().toString().trim(), productId,String.valueOf(totalValue));
                             } else if (selectedpaymentType.equalsIgnoreCase(getResources().getString(R.string.digital))) {
                                 int total = quantity * pricetotal;
                                 // Log.e("Total Amount","------->"+total);
@@ -393,8 +400,8 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
 
         quantityText.setText(String.valueOf(quantity));
 
-        int total = quantity * pricetotal;
-        totalValue = quantity * pricetotal;
+        int total = quantity * getQuatityPrice(pricetotal);
+        totalValue = total;
 
         totalprice.setText(String.valueOf("Rs : "+ total));
     }
@@ -406,8 +413,8 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
 
             quantityText.setText(String.valueOf(quantity));
 
-            int total = quantity * pricetotal;
-             totalValue = quantity * pricetotal;
+            int total = quantity * getQuatityPrice(pricetotal);
+            totalValue = total;
 
             totalprice.setText(String.valueOf("Rs : "+ total));
 
@@ -567,7 +574,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
         popup.show();//showing popup menu
     }
 
-    public void OrderProducts(String address,String id) {
+    public void OrderProducts(String address,String id,String price) {
         try{
             String language = SaveSharedPreference.getAppLanguage(mActivity);
             //Log.e("Language_Checking","---->"+language);
@@ -595,14 +602,27 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
             String link = "http://www.google.com/maps/place/" + String.valueOf(LocationValueModel.getmLatitude()) + "," + String.valueOf(LocationValueModel.getmLongitude());
 
             JSONObject map =new JSONObject();
-            map.put("productid",id);
+            map.put("products",id);
             map.put("registerid",SaveSharedPreference.getPrefUserRegisterId(mActivity));
             map.put("userid",SaveSharedPreference.getHostFor(mActivity));
-            map.put("qty", quantity);
+            map.put("quantity", quantity);
             map.put("paytype",selectedpaymentType);
             map.put("location",link);
             map.put("address",address);
             map.put("postcode",pinCode);
+            map.put("price",price);
+            map.put("totprice",price);
+
+
+            /*map.put("products",id);
+            map.put("registerid",SaveSharedPreference.getPrefUserRegisterId(mActivity));
+            map.put("userid",SaveSharedPreference.getHostFor(mActivity));
+            map.put("quantity", quantity);
+            map.put("paytype",selectedpaymentType);
+            map.put("location",link);
+            map.put("address",address);
+            map.put("postcode",pinCode);
+            map.put("price",price);*/
 
 
             Log.e("Params","-->"+map);
@@ -752,6 +772,36 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
                                     gm.setDetails(Utility.NullCheckJson(obj,Utility.APINAME_DETAILS));
                                     gm.setPrice(Utility.NullCheckJson(obj,Utility.PRICE));
                                     gm.setImage(Utility.NullCheckJson(obj,Utility.IMAGE));
+                                    gm.setDetails(Utility.NullCheckJson(obj,"details"));
+
+                                   // priceArray = Utility.NullCheckJson(obj,"preice");
+                                    priceArray = obj.getJSONArray("preice");
+
+
+
+                                    if(priceArray.length()>0)
+                                    {
+                                        for (int j=0;j<priceArray.length();j++)
+                                        {
+                                            JSONObject re = priceArray.getJSONObject(j);
+
+
+                                            CartModel.Prices cp = new CartModel.Prices();
+
+                                            cp.setAbove(re.getInt("above"));
+                                            cp.setBelow(re.getInt("below"));
+                                            cp.setPrice(re.getInt("price"));
+                                            priceList.add(cp);
+
+                                        }
+
+                                        // if(priceList.size()>0)
+
+                                      //  Log.e("PricelistSize","-->"+priceList.size());
+
+
+                                    }
+
 
                                     data.add(gm);
 
@@ -849,7 +899,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
             productid = tempdat.getId();
             productPrice.setText("Rs : "+tempdat.getPrice());
             productTitle.setText(tempdat.getName());
-
+            description.setText(Html.fromHtml(tempdat.getDetails()));
             quantityText.setText(String.valueOf(quantity));
             totalprice.setText(String.valueOf("Rs : "+(pricetotal * quantity)));
 
@@ -1109,7 +1159,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
             if (status.equals("success")){
                 Toast.makeText(Grocerykit.this,"Transaction  Successful.",Toast.LENGTH_SHORT).show();
                 showDialog();
-                OrderProducts(addressText.getText().toString().trim(),productId);
+                OrderProducts(addressText.getText().toString().trim(),productId,String.valueOf(totalValue));
             }else if ("Payment cancelled by User.".equals(paymentCancel)){
                 Toast.makeText(Grocerykit.this,"Payment cancelled by User.",Toast.LENGTH_SHORT).show();
                 finish();
@@ -1260,6 +1310,7 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
         cm.setPrice(data.get(0).getPrice());
         cm.setAddress(addressText.getText().toString().trim());
         cm.setSelected(true);
+        cm.setId(productId);
 
 
 
@@ -1267,9 +1318,9 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
             JSONObject object = new JSONObject();
 
 
-            JSONArray arr = new JSONArray();
+           // JSONArray arr = new JSONArray();
 
-            JSONObject ob1= new JSONObject();
+            /*JSONObject ob1= new JSONObject();
             ob1.put("above",1);
             ob1.put("below",10);
             ob1.put("price",350);
@@ -1280,9 +1331,9 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
             ob2.put("above",10);
             ob2.put("below",100);
             ob2.put("price",250);
-            arr.put(ob2);
+            arr.put(ob2);*/
 
-            object.put("preice",arr);
+            object.put("preice",priceArray);
 
             cm.setPricelists(String.valueOf(object));
 
@@ -1318,23 +1369,69 @@ public class Grocerykit extends AppCompatActivity implements View.OnClickListene
             @Override
             public void run() {
                 // if (!intent.hasExtra(Constants.UPDATE_Person_Id)) {
-                mDb.cartDao().insertPerson(cm);
+
+                CartModel cart = mDb.cartDao().loadPersonById(productId);
+
+                if(cart!=null)
+                {
+                    cart.setQuantity(String.valueOf(Integer.parseInt(cart.getQuantity())+quantity));
+
+                    cart.setTotalprice(String.valueOf(Integer.parseInt(cart.getTotalprice())+totalValue));
+
+                    cart.setId(productId);
+                    mDb.cartDao().updatePerson(cart);
+
+
+
+                }else {
+                    mDb.cartDao().insertPerson(cm);
+
+
+
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mActivity, getResources().getString(R.string.items_added_cart), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+                finish();
+
                /* } else {
                     person.setId(mPersonId);
                     mDb.personDao().updatePerson(person);
                 }*/
 
-               runOnUiThread(new Runnable() {
-                   @Override
-                   public void run() {
-                       Toast.makeText(mActivity, getResources().getString(R.string.items_added_cart), Toast.LENGTH_SHORT).show();
 
-                   }
-               });
-
-                finish();
             }
         });
+    }
+
+
+    private int getQuatityPrice(int tempdata)
+    {
+        int p=tempdata;
+
+        for(int i = 0 ;i<priceList.size();i++)
+        {
+            CartModel.Prices cpdata = priceList.get(i);
+
+            Log.e("above","-->"+cpdata.getAbove());
+            Log.e("below","-->"+cpdata.getBelow());
+            Log.e("price","-->"+cpdata.getPrice());
+
+
+            if(quantity >= cpdata.getAbove() && quantity < cpdata.getBelow()) {
+                p = cpdata.getPrice();
+                break;
+            }
+        }
+
+
+        return p;
     }
 
 

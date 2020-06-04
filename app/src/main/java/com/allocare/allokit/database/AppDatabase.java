@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase;
 
 import com.allocare.allokit.cartmodule.CartModel;
 
-@Database(entities = {CartModel.class}, version = 1, exportSchema = false)
+@Database(entities = {CartModel.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String LOG_TAG = AppDatabase.class.getSimpleName();
     private static final Object LOCK = new Object();
@@ -30,4 +30,10 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract CartDao cartDao();
+
+
+
+
+
+  //  public abstract CartDao cartDao();
 }

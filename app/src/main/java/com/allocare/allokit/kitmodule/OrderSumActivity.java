@@ -934,7 +934,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
             map.put("hostfor",SaveSharedPreference.getHostFor(mActivity));
             map.put("language",type);
             map.put("offset","1");
-            map.put("limit","5");
+            map.put("limit","50");
 
             String url = SaveSharedPreference.getBaseURL(mActivity)+Utility.APINAME_PRODUCT;
 
@@ -1473,7 +1473,7 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
                 productTitle.setText(tempdat.getName());
                 type.setText(tempdat.getName());
 
-                description.setText(tempdat.getDetails());
+                description.setText(Html.fromHtml(tempdat.getDetails()));
 
                 buyLay.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1823,9 +1823,9 @@ public class OrderSumActivity extends AppCompatActivity implements View.OnClickL
            NetworkInfo otherNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
 
            if(currentNetworkInfo.isConnected()){
-               Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_LONG).show();
+             //  Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_LONG).show();
            }else{
-               Toast.makeText(getApplicationContext(), "Not Connected", Toast.LENGTH_LONG).show();
+              // Toast.makeText(getApplicationContext(), "Not Connected", Toast.LENGTH_LONG).show();
            }
        }
    };

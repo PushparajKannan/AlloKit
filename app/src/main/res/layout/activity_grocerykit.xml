@@ -287,6 +287,7 @@
                         android:layout_height="wrap_content">
 
                         <androidx.cardview.widget.CardView
+                            android:id="@+id/quantitySelect"
                             android:layout_width="wrap_content"
                             android:layout_alignParentEnd="true"
                             app:cardCornerRadius="4dp"
@@ -356,6 +357,7 @@
                             android:orientation="vertical"
                             android:weightSum="10"
                             android:layout_marginTop="16dp"
+                            android:layout_toLeftOf="@id/quantitySelect"
                             android:layout_marginBottom="16dp">
 
                             <TextView
@@ -422,18 +424,18 @@
 
 
 
-                    <!--<TextView
+                    <TextView
                         android:id="@+id/description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/dummy_content"
-                        android:layout_marginLeft="0dp"
-                        android:layout_marginRight="0dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
                         android:layout_marginBottom="16dp"
                         android:fontFamily="@font/psr"
                         android:textSize="14sp"
 
-                        />-->
+                        />
 
 
 

@@ -23,11 +23,15 @@ public interface CartDao {
     @Update
     void updatePerson(CartModel person);
 
+    @Query("DELETE FROM Cart")
+     void nullTable();
+
+
     @Delete
     void delete(CartModel person);
 
     @Query("SELECT * FROM Cart WHERE id = :id")
-    CartModel loadPersonById(int id);
+    CartModel loadPersonById(String id);
 
     @Query("SELECT * FROM Cart WHERE isSelected = :type")
     LiveData<List<CartModel>> getCartViews(boolean type);

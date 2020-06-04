@@ -8,11 +8,14 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,15 +24,29 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.allocare.allokit.R;
+import com.allocare.allokit.address.AddressActivity;
 import com.allocare.allokit.database.AppDatabase;
 import com.allocare.allokit.database.AppExecutors;
+import com.allocare.allokit.kitmodule.Grocerykit;
+import com.allocare.allokit.kitmodule.LocationValueModel;
+import com.allocare.allokit.kitmodule.MyOrderActivity;
+import com.allocare.allokit.kitmodule.OrderSumActivity;
 import com.allocare.allokit.kitmodule.SaveSharedPreference;
 import com.allocare.allokit.kitmodule.Utility;
+import com.allocare.allokit.kitmodule.VolleySingleton;
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.DecodeFormat;
@@ -40,15 +57,18 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class CartActivity extends AppCompatActivity {
+public class CartActivity extends AppCompatActivity implements View.OnClickListener {
 
     RecyclerView recyclerView;
     MyCartListAdapter adpater;
@@ -71,6 +91,22 @@ public class CartActivity extends AppCompatActivity {
     int cartTotalRupees = 0;
     RelativeLayout bottomLay;
 
+    TextView change;
+    String selectedpaymentType;
+    final int UPI_PAYMENT=0;
+
+    RadioGroup paymentType;
+    RadioButton cash, digital;
+    TextInputEditText addressText;
+
+    LinearLayout topLay;
+
+    String pinCode="";
+
+    public static ArrayList<String> cities = new ArrayList<String>();
+
+    CardView checkOutLay;
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -92,6 +128,12 @@ public class CartActivity extends AppCompatActivity {
         dialog = new ProgressDialog(mActivity);
         dialog.setMessage(getResources().getString(R.string.loading));
 
+        try {
+            cities.addAll(OrderSumActivity.cities);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        getPINCode();
 
         backImg = findViewById(R.id.backImg);
         recyclerView = findViewById(R.id.recyclerView);
@@ -99,15 +141,35 @@ public class CartActivity extends AppCompatActivity {
         emptylay = findViewById(R.id.emptylay);
         bottomLay = findViewById(R.id.bottomLay);
 
+        addressText = findViewById(R.id.addressText);
+        paymentType = findViewById(R.id.paymentType);
+
+        cash = findViewById(R.id.cash);
+        digital = findViewById(R.id.digital);
+        change = findViewById(R.id.change);
+        topLay = findViewById(R.id.topLay);
+
+
         totalprice = findViewById(R.id.totalprice);
+        checkOutLay = findViewById(R.id.checkOutLay);
 
         //totalprice.setText(getResources().getString(R.string.rupeesString, getResources().getInteger(R.integer.some_integer)));
 
+        pinCode = SaveSharedPreference.getUserPIN(mActivity);
+
+        if(!SaveSharedPreference.getUserArea(mActivity).equalsIgnoreCase(""))
+        {
+            addressText.setText(SaveSharedPreference.getUserArea(mActivity));
+        }else {
+
+            //  Toast.makeText(mActivity, getResources().getString(R.string.pleas_fil_adress), Toast.LENGTH_SHORT).show();
+        }
 
         adpater =  new MyCartListAdapter(lists,this);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adpater);
+
 
 
       //  showDialog();
@@ -124,6 +186,8 @@ public class CartActivity extends AppCompatActivity {
 
 
 
+        change.setOnClickListener(this);
+        checkOutLay.setOnClickListener(this);
 
         /*
         //SWIPE DELETE
@@ -151,6 +215,61 @@ public class CartActivity extends AppCompatActivity {
 
         retrieveTasks();
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId())
+        {
+            case R.id.change:
+                Intent s =new Intent(mActivity, AddressActivity.class);
+                startActivityForResult(s,23);
+                break;
+
+            case R.id.checkOutLay:
+                if(cartTotalRupees!=0)
+                {
+
+                    if(!TextUtils.isEmpty(addressText.getText().toString().trim()))
+                {
+
+
+                    if(isValidPincode(pinCode)) {
+
+                        int radioButtonID = paymentType.getCheckedRadioButtonId();
+                        View radioButton = paymentType.findViewById(radioButtonID);
+                        int idx = paymentType.indexOfChild(radioButton);
+                        RadioButton r = (RadioButton) paymentType.getChildAt(idx);
+                        selectedpaymentType = r.getText().toString();
+
+                        if (selectedpaymentType.equalsIgnoreCase(getResources().getString(R.string.cash))) {
+                            showDialog();
+
+                            Log.e("selectedQuantity","-->"+getSelectedQuantity());
+                            Log.e("selectedPrice","-->"+getSelectedPrice());
+                            Log.e("selectedId","-->"+getSelectedId());
+                              OrderProducts(addressText.getText().toString().trim(), getSelectedId(),getSelectedQuantity(),getSelectedPrice(),String.valueOf(cartTotalRupees));
+                        } else if (selectedpaymentType.equalsIgnoreCase(getResources().getString(R.string.digital))) {
+                            int total = cartTotalRupees;
+                            // Log.e("Total Amount","------->"+total);
+                            payUsingPay(String.valueOf(total), SaveSharedPreference.getUPIID(mActivity), "Admin", "AlloKit");
+                        }
+                    }else {
+                        Toast.makeText(mActivity, getResources().getString(R.string.enter_valid_pincode), Toast.LENGTH_SHORT).show();
+
+                    }
+
+
+
+                }else {
+                    Toast.makeText(mActivity, getResources().getString(R.string.enter_address), Toast.LENGTH_SHORT).show();
+                }
+
+                }else {
+                    Toast.makeText(mActivity, getResources().getString(R.string.selct_item), Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
     }
 
     public class MyCartListAdapter extends RecyclerView.Adapter {
@@ -529,6 +648,8 @@ public class CartActivity extends AppCompatActivity {
 
                         }
 
+                       // if(priceList.size()>0)
+
                         Log.e("PricelistSize","-->"+priceList.size());
 
 
@@ -669,9 +790,11 @@ public class CartActivity extends AppCompatActivity {
 
 
     private void retrieveTasks() {
+
         mDb.cartDao().loadAllPersons().observe(this, new Observer<List<CartModel>>() {
             @Override
             public void onChanged(@Nullable List<CartModel> people) {
+
                 adpater.setTasks(people);
 
                // calculatePrice();
@@ -715,6 +838,10 @@ public class CartActivity extends AppCompatActivity {
             public void run() {
                 //int position = viewHolder.getAdapterPosition();
                 List<CartModel> tasks = adpater.getTasks();
+
+
+
+
                 mDb.cartDao().delete(tasks.get(position));
 
                 runOnUiThread(new Runnable() {
@@ -730,6 +857,32 @@ public class CartActivity extends AppCompatActivity {
                         Toast.makeText(mActivity, getResources().getString(R.string.item_removed), Toast.LENGTH_SHORT).show();
                     }
                 });
+
+            }
+        });
+    }
+
+    public void removeCart(String id)
+    {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //int position = viewHolder.getAdapterPosition();
+                List<CartModel> tasks = adpater.getTasks();
+
+
+
+                for (int i= 0;i<tasks.size();i++) {
+
+
+                    if(tasks.get(i).getId().equalsIgnoreCase(id)) {
+                        mDb.cartDao().delete(tasks.get(i));
+                    }
+
+                }
+
+
+
 
             }
         });
@@ -763,6 +916,122 @@ public class CartActivity extends AppCompatActivity {
             Toast.makeText(mActivity, "nulladapter", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private String getSelectedQuantity() {
+        if (adpater != null) {
+            List<CartModel> tasks = adpater.getTasks();
+
+            String  quantity ="";
+
+            for (int i = 0; i < tasks.size(); i++) {
+
+                if(tasks.get(i).isSelected()) {
+                    try {
+                        quantity = quantity + tasks.get(i).getQuantity() + "#";
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+
+            if(!quantity.equalsIgnoreCase("")) {
+                quantity = quantity.substring(0,quantity.length()-1);
+            }
+
+
+            return quantity;
+           // cartTotalRupees = totalamount;
+
+            // totalamount = cartTotalRupees;
+
+           // if (totalprice != null)
+             //   totalprice.setText(getResources().getString(R.string.rupeesString, totalamount));
+
+        }else {
+            Toast.makeText(mActivity, "nulladapter", Toast.LENGTH_SHORT).show();
+
+            return "";
+
+        }
+    }
+
+    private String getSelectedPrice() {
+        if (adpater != null) {
+            List<CartModel> tasks = adpater.getTasks();
+
+            String  quantity ="";
+
+            for (int i = 0; i < tasks.size(); i++) {
+
+                if(tasks.get(i).isSelected()) {
+                    try {
+                        quantity = quantity + tasks.get(i).getTotalprice() + "#";
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+
+            if(!quantity.equalsIgnoreCase("")) {
+                quantity = quantity.substring(0,quantity.length()-1);
+            }
+
+
+            return quantity;
+            // cartTotalRupees = totalamount;
+
+            // totalamount = cartTotalRupees;
+
+            // if (totalprice != null)
+            //   totalprice.setText(getResources().getString(R.string.rupeesString, totalamount));
+
+        }else {
+            Toast.makeText(mActivity, "nulladapter", Toast.LENGTH_SHORT).show();
+
+            return "";
+
+        }
+    }
+
+
+    private String getSelectedId() {
+        if (adpater != null) {
+            List<CartModel> tasks = adpater.getTasks();
+
+            String  quantity ="";
+
+            for (int i = 0; i < tasks.size(); i++) {
+
+                if(tasks.get(i).isSelected()) {
+                    try {
+                        quantity = quantity + tasks.get(i).getId() + "#";
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+
+            if(!quantity.equalsIgnoreCase("")) {
+                quantity = quantity.substring(0,quantity.length()-1);
+            }
+
+
+            return quantity;
+            // cartTotalRupees = totalamount;
+
+            // totalamount = cartTotalRupees;
+
+            // if (totalprice != null)
+            //   totalprice.setText(getResources().getString(R.string.rupeesString, totalamount));
+
+        }else {
+            Toast.makeText(mActivity, "nulladapter", Toast.LENGTH_SHORT).show();
+
+            return "";
+
+        }
+    }
+
 
     /*private void calculatePrice(int pos) {
         if (adpater != null) {
@@ -807,6 +1076,13 @@ public class CartActivity extends AppCompatActivity {
             }
         }
 
+        if(topLay !=null)
+        {
+            if(topLay.getVisibility() == View.VISIBLE) {
+                topLay.setVisibility(View.GONE);
+            }
+        }
+
 
     }
 
@@ -824,5 +1100,423 @@ public class CartActivity extends AppCompatActivity {
             }
         }
 
+        if(topLay !=null)
+        {
+            if(topLay.getVisibility() != View.VISIBLE) {
+                topLay.setVisibility(View.VISIBLE);
+            }
+        }
+
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == Activity.RESULT_OK)
+        {
+            switch (requestCode)
+            {
+                case 23:
+
+                    if(data!=null)
+                    {
+                        addressText.setText(data.getStringExtra("addres"));
+                        pinCode = data.getStringExtra("pincode");
+                    }
+
+
+
+                    break;
+                case UPI_PAYMENT:
+                    if (data!=null){
+                        String text = data.getStringExtra("response");
+                        ArrayList<String> dataList = new ArrayList<>();
+                        dataList.add(text);
+                        upiPaymentDataOperation(dataList);
+                    } else {
+                        ArrayList<String> dataList = new ArrayList<>();
+                        dataList.add("nothing");
+                        upiPaymentDataOperation(dataList);
+                    }
+                    break;
+            }
+
+        }
+
+    }
+    private void payUsingPay(String amount_str, String upi_str, String name_str, String note_str) {
+        Uri uri = Uri.parse("upi://pay").buildUpon()
+                .appendQueryParameter("pa",upi_str)
+                .appendQueryParameter("pn",name_str)
+                .appendQueryParameter("tn",note_str)
+                .appendQueryParameter("am",amount_str)
+                .appendQueryParameter("cu","INR")
+                .build();
+        Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
+        upiPayIntent.setData(uri);
+        Intent chooser = Intent.createChooser(upiPayIntent,"Pay with");
+
+        if (null != chooser.resolveActivity(getPackageManager())){
+            startActivityForResult(chooser,UPI_PAYMENT);
+        }else {
+            Toast.makeText(this,"No UPI app found,please install one to continue",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private void upiPaymentDataOperation(ArrayList<String> data) {
+
+        String str = data.get(0);
+        String paymentCancel = "";
+        if (str == null) str = "discard";
+        String status = "";
+        String approvalRefNo ="";
+        String response[] = str.split("&");
+        for (int i=0;i<response.length;i++){
+            String equalStr[] = response[i].split("=");
+            if (equalStr.length>=2){
+                if (equalStr[0].toLowerCase().equals("Status".toLowerCase())){
+                    status = equalStr[1].toLowerCase();
+                }else if (equalStr[0].toLowerCase().equals("ApprovalRefNo".toLowerCase())|| equalStr[0].toLowerCase().equals("tnxRef".toLowerCase())){
+                    approvalRefNo = equalStr[1];
+                }
+            } else {
+                paymentCancel = "Payment cancelled by User.";
+            }
+        }
+        if (status.equals("success")){
+            Toast.makeText(mActivity,"Transaction  Successful.",Toast.LENGTH_SHORT).show();
+            showDialog();
+
+            Log.e("selectedQuantity","-->"+getSelectedQuantity());
+            Log.e("selectedPrice","-->"+getSelectedPrice());
+            Log.e("selectedId","-->"+getSelectedId());
+            OrderProducts(addressText.getText().toString().trim(), getSelectedId(),getSelectedQuantity(),getSelectedPrice(),String.valueOf(cartTotalRupees));
+        }else if ("Payment cancelled by User.".equals(paymentCancel)){
+            Toast.makeText(mActivity,"Payment cancelled by User.",Toast.LENGTH_SHORT).show();
+            finish();
+        }else {
+            Toast.makeText(mActivity,"Transaction failed.Please try again",Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+    }
+
+
+    public void getPINCode() {
+        try{
+            String language = SaveSharedPreference.getAppLanguage(this);
+            //Log.e("Language_Checking","---->"+language);
+
+            String type = "english";
+            if(language.equals("ta")) {
+                type = "tamil";
+            }else if(language.equals("en")) {
+                type = "english";
+
+            }
+
+            JSONObject map =new JSONObject();
+            // map.put("hostfor",SaveSharedPreference.getHostFor(mActivity));
+            // map.put("language",type);
+            // map.put("offset","1");
+            // map.put("limit","5");
+
+            String url = Utility.BASE_POSTCODE;
+
+
+            Log.e("Productparams","-->"+map);
+            Log.e("ProducturL","-->"+url);
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, map, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    Log.e("Respoonce","-->"+response);
+
+                    //cancelDialog();
+                    try {
+                        if(response.getString(Utility.API_RESPONCE_SUCCESS).equalsIgnoreCase("true"))
+                        {
+
+                            JSONArray datas = response.getJSONArray("data");
+                            if(datas.length()>0)
+                            {
+                                cities.clear();
+
+                                for (int i=0;i<datas.length();i++)
+                                {
+                                    JSONObject obj= datas.getJSONObject(i);
+
+                                    cities.add(Utility.NullCheckJson(obj,"postcode"));
+
+                                    //  GroceryKitModule gm = new GroceryKitModule();
+
+                                    //gm.setId(Utility.NullCheckJson(obj,Utility.ID));
+                                    //gm.setName(Utility.NullCheckJson(obj,Utility.NAME));
+                                    // gm.setDetails(Utility.NullCheckJson(obj,Utility.APINAME_DETAILS));
+                                    // gm.setPrice(Utility.NullCheckJson(obj,Utility.PRICE));
+                                    // gm.setImage(Utility.NullCheckJson(obj,Utility.IMAGE));
+
+                                    // data.add(gm);
+
+                                }
+                            }
+
+                            //  adapterCities.notifyDataSetChanged();
+
+                            //  setDetails();
+
+                        }
+
+                    } catch (JSONException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    // cancelDialog();
+
+                    Log.e("error",error.toString());
+
+                    error.printStackTrace();
+                }
+            }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String,String> headers = new HashMap<>();
+                    headers.put("token", SaveSharedPreference.getPrefUserToken(mActivity));
+                    Log.e("Header",""+headers);
+
+                    return headers;
+                }
+            };
+
+            request.setRetryPolicy(new DefaultRetryPolicy(0,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstance(mActivity).addToRequestQueue(request);
+
+            /*{
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> headers = new HashMap<>();
+                headers.put("token", SaveSharedPreference.getPrefUserToken(mActivity));
+                return headers;
+            }
+            }*/
+
+
+            /*String language = SaveSharedPreference.getAppLanguage(this);
+            //Log.e("Language_Checking","---->"+language);
+
+            String type = "english";
+            if(language.equals("ta")) {
+                type = "tamil";
+            }else if(language.equals("en")) {
+                type = "english";
+
+            }*/
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isValidPincode(String pincode)
+    {
+        if(cities.size()>0)
+        {
+            for(String na: cities)
+            {
+                if(na.equalsIgnoreCase(pincode))
+                    return true;
+            }
+            return false;
+
+        }else {
+            return false;
+        }
+    }
+
+    public void OrderProducts(String address,String id,String quantity,String price,String totalprice) {
+        try{
+            String language = SaveSharedPreference.getAppLanguage(mActivity);
+            //Log.e("Language_Checking","---->"+language);
+
+            String type = "english";
+            if(language.equals("ta")) {
+                type = "tamil";
+            }else if(language.equals("en")) {
+                type = "english";
+
+            }
+
+            /*{
+                "productid":"1",
+                    "registerid":"4",
+                    "userid":"2",
+                    "qty":"1",
+                    "paytype":"Digital",
+                    "location":"testing",
+                    "address":"testing"
+            }*/
+
+
+
+            String link = "http://www.google.com/maps/place/" + String.valueOf(LocationValueModel.getmLatitude()) + "," + String.valueOf(LocationValueModel.getmLongitude());
+
+            JSONObject map =new JSONObject();
+            map.put("products",id);
+            map.put("registerid",SaveSharedPreference.getPrefUserRegisterId(mActivity));
+            map.put("userid",SaveSharedPreference.getHostFor(mActivity));
+            map.put("quantity", quantity);
+            map.put("paytype",selectedpaymentType);
+            map.put("location",link);
+            map.put("address",address);
+            map.put("postcode",pinCode);
+            map.put("price",price);
+            map.put("totprice",totalprice);
+
+           /* {
+                "registerid":"4",
+                    "userid":"2",
+                    "paytype":"Digital",
+                    "location":"testing",
+                    "address":"testing",
+                    "postcode":"625012",
+                    "products":"7#6",
+                    "quantity":"1#2",
+                    "price":"50#150"
+            }*/
+
+
+            Log.e("Params","-->"+map);
+            //String url = SaveSharedPreference.getBaseURL(mActivity)+Utility.APINAME_PRODUCT+"/"+type+"/"+SaveSharedPreference.getHostFor(mActivity)+"/1/5";
+            String url = SaveSharedPreference.getBaseURL(mActivity)+Utility.APINAME_PLACEORDER;
+
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, map, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    Log.e("Respoonce","-->"+response);
+
+                    cancelDialog();
+                    try {
+                        if(response.getString(Utility.API_RESPONCE_SUCCESS).equalsIgnoreCase("true"))
+                        {
+
+                            if(!id.equalsIgnoreCase(""))
+                            {
+                                if(id.contains("#"))
+                                {
+                                    String[] ids = id.split("#");
+                                    if(ids.length>0)
+                                    {
+                                        for (int v=0;v<ids.length;v++) {
+                                            removeCart(ids[v]);
+                                        }
+                                    }
+
+                                }else {
+                                    removeCart(id);
+                                }
+
+                            }
+
+
+
+
+                            Toast.makeText(mActivity, getResources().getString(R.string.your_order_sucessfull), Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(mActivity, MyOrderActivity.class);
+                            startActivity(intent);
+                            // overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                           // mDb.cartDao().
+
+
+
+
+
+                                   /* AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mDb.cartDao().nullTable();
+                                }
+                            });*/
+
+                            finish();
+
+
+                        }else {
+                            Toast.makeText(mActivity, response.getString("message"), Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    } catch (JSONException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    cancelDialog();
+
+                    error.printStackTrace();
+
+                    Log.d("TAG", "Error: " + error
+                            + "\nStatus Code " + error.networkResponse.statusCode
+                            + "\nResponse Data " + error.networkResponse.data
+                            + "\nCause " + error.getCause()
+                            + "\nmessage" + error.getMessage());
+                }
+            }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String,String> headers = new HashMap<>();
+                    headers.put("Content-Type", "application/json");
+                    headers.put("token", SaveSharedPreference.getPrefUserToken(mActivity));
+                    Log.e("Header",""+headers);
+
+                    return headers;
+
+                }
+                @Override
+                public String getBodyContentType() {
+                    return "application/json";
+                }
+
+
+            };
+
+            request.setRetryPolicy(new DefaultRetryPolicy(0,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstance(mActivity).addToRequestQueue(request);
+
+
+
+
+            /*String language = SaveSharedPreference.getAppLanguage(this);
+            //Log.e("Language_Checking","---->"+language);
+
+            String type = "english";
+            if(language.equals("ta")) {
+                type = "tamil";
+            }else if(language.equals("en")) {
+                type = "english";
+
+            }*/
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+
 }

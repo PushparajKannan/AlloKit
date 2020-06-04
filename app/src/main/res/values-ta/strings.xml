@@ -70,13 +70,14 @@
     <string name="dummy_content2">சானிட்டரி பேக்</string>
     <string name="select_pin">அஞ்சல் குறியீட்டைத் தேர்ந்தெடுக்கவும்</string>
     <string name="empty_order">உங்கள் ஆர்டர் காலியாக உள்ளது</string>
-    <string name="my_cart">My Cart</string>
-    <string name="remove">Remove</string>
-    <string name="mycart">MyCart</string>
-    <string name="add_cart">Add Cart</string>
-    <string name="items_added_cart">"Items Added to Your Cart "</string>
-    <string name="item_removed">Item Removed Successfully</string>
+    <string name="my_cart">மைகார்ட்</string>
+    <string name="remove">அகற்று</string>
+    <string name="mycart">மைகார்ட்</string>
+    <string name="add_cart">கார்ட்சேர்க்கவும்</string>
+    <string name="items_added_cart">"உங்களிடம் சேர்க்கப்பட்ட உருப்படிகள் கார்ட"</string>
+    <string name="item_removed">உருப்படி வெற்றிகரமாக அகற்றப்பட்டது</string>
     <string name="rupeesString">Rs: %d</string>
-    <string name="empty_cart">Your Cart is Empty</string>
+    <string name="empty_cart">உங்கள் கார்ட காலியாக உள்ளது</string>
+    <string name="selct_item">கார்ட உருப்படிகளைத் தேர்ந்தெடுக்கவும்</string>
 
 </resources>

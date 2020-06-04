@@ -112,7 +112,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/title_lay"
-        android:layout_above="@id/bottomLay">
+        android:layout_above="@id/bottomLay"
+        android:fillViewport="true">
 
 
 
@@ -120,72 +121,85 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/pay_type"
-                android:fontFamily="@font/ps"
-                android:textSize="16sp"
-                />
-
-
 
             <LinearLayout
+                android:id="@+id/topLay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:orientation="horizontal"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp">
+                android:orientation="vertical">
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/pay_type"
+                    android:fontFamily="@font/ps"
+                    android:textSize="16sp"
+                    />
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    >
+                    android:layout_centerInParent="true"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp">
 
 
-                    <RadioGroup
-                        android:id="@+id/paymentType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:checkedButton="@id/cash">
+                        >
 
-                        <RadioButton
-                            android:id="@+id/cash"
+
+                        <RadioGroup
+                            android:id="@+id/paymentType"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/cash"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:textSize="14sp"
-                            android:fontFamily="@font/psr"
-                            />
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:checkedButton="@id/cash">
 
-                        <RadioButton
-                            android:id="@+id/digital"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/digital"
-                            android:layout_marginRight="16dp"
-                            android:fontFamily="@font/psr"
-                            android:textSize="14sp"
+                            <RadioButton
+                                android:id="@+id/cash"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/cash"
+                                android:layout_marginLeft="16dp"
+                                android:layout_marginRight="16dp"
+                                android:textSize="14sp"
+                                android:fontFamily="@font/psr"
+                                />
 
-                            />
+                            <RadioButton
+                                android:id="@+id/digital"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/digital"
+                                android:layout_marginRight="16dp"
+                                android:fontFamily="@font/psr"
+                                android:textSize="14sp"
 
-                    </RadioGroup>
+                                />
+
+                        </RadioGroup>
+
+
+
+
+
+                    </LinearLayout>
+
 
 
 
@@ -194,96 +208,98 @@
                 </LinearLayout>
 
 
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginRight="16dp"
+                        android:text="@string/addres_info"
+                        android:fontFamily="@font/ps"
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="@string/change"
+                        android:layout_alignParentEnd="true"
+                        android:fontFamily="@font/psr"
+                        android:textSize="18sp"
+                        android:textColor="@color/colorBlack"/>
+
+                </RelativeLayout>
 
 
 
+               <!-- <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightGrey"/>-->
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    >
+
+                    <!-- <ImageView
+                         android:id="@+id/gpsLocation"
+                         android:layout_width="50dp"
+                         android:layout_height="50dp"
+                         android:layout_margin="16dp"
+                         android:src="@drawable/ic_my_location_black_24dp"
+                         android:padding="10dp"
+                         android:tint="@color/gray_scale"/>-->
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="16dp"
+                        android:layout_margin="16dp"
+                        android:layout_marginBottom="16dp"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                        >
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/addressText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/psr"
+                            android:hint="@string/address"
+                            android:textSize="18sp"
+                            android:drawableRight="@drawable/ic_my_location_black_24dp"
+                            />
+
+
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </RelativeLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/lightGrey"/>
 
             </LinearLayout>
 
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginRight="16dp"
-                    android:text="@string/addres_info"
-                    android:fontFamily="@font/ps"
-                    android:textSize="16sp"/>
-
-                <TextView
-                    android:id="@+id/change"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:text="@string/change"
-                    android:layout_alignParentEnd="true"
-                    android:fontFamily="@font/psr"
-                    android:textSize="18sp"
-                    android:textColor="@color/colorBlack"/>
-
-            </RelativeLayout>
 
 
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lightGrey"/>
 
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                >
-
-            <!-- <ImageView
-                 android:id="@+id/gpsLocation"
-                 android:layout_width="50dp"
-                 android:layout_height="50dp"
-                 android:layout_margin="16dp"
-                 android:src="@drawable/ic_my_location_black_24dp"
-                 android:padding="10dp"
-                 android:tint="@color/gray_scale"/>-->
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="16dp"
-                android:layout_margin="16dp"
-                android:layout_marginBottom="16dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                >
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/addressText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/psr"
-                    android:hint="@string/address"
-                    android:textSize="18sp"
-                    android:drawableRight="@drawable/ic_my_location_black_24dp"
-                    />
-
-
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            </RelativeLayout>
-
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lightGrey"/>
 
 
             <RelativeLayout
